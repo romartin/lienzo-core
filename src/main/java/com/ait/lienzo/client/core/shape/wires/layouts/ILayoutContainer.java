@@ -14,34 +14,29 @@
    limitations under the License.
  */
 
-package com.ait.lienzo.client.core.shape.wires;
+package com.ait.lienzo.client.core.shape.wires.layouts;
 
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.types.Point2D;
 
-public interface LayoutContainer
+public interface ILayoutContainer<L>
 {
-    public enum Layout
-    {
-        CENTER, LEFT, TOP, RIGHT, BOTTOM;
-    }
+    ILayoutContainer setOffset(Point2D offset);
 
-    public LayoutContainer setOffset(Point2D offset);
+    ILayoutContainer setSize(double width, double height);
 
-    public LayoutContainer setSize(double width, double height);
+    ILayoutContainer add(IPrimitive<?> child);
 
-    public LayoutContainer add(IPrimitive<?> child);
+    ILayoutContainer remove(IPrimitive<?> child);
 
-    public LayoutContainer add(IPrimitive<?> child, Layout layout);
+    ILayoutContainer execute();
 
-    public LayoutContainer remove(IPrimitive<?> child);
+    ILayoutContainer refresh();
 
-    public LayoutContainer execute();
+    Group getGroup();
 
-    public LayoutContainer refresh();
+    L getLayout();
 
-    public Group getGroup();
-
-    public void destroy();
+    void destroy();
 }
