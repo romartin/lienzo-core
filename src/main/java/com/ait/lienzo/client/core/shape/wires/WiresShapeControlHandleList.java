@@ -19,33 +19,18 @@
 
 package com.ait.lienzo.client.core.shape.wires;
 
-import java.util.Iterator;
-
-import com.ait.lienzo.client.core.event.AbstractNodeDragEvent;
-import com.ait.lienzo.client.core.event.NodeDragEndEvent;
-import com.ait.lienzo.client.core.event.NodeDragEndHandler;
-import com.ait.lienzo.client.core.event.NodeDragMoveEvent;
-import com.ait.lienzo.client.core.event.NodeDragMoveHandler;
-import com.ait.lienzo.client.core.event.NodeDragStartEvent;
-import com.ait.lienzo.client.core.event.NodeDragStartHandler;
+import com.ait.lienzo.client.core.event.*;
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.MultiPath;
-import com.ait.lienzo.client.core.shape.wires.event.WiresDragEndEvent;
-import com.ait.lienzo.client.core.shape.wires.event.WiresDragEndHandler;
-import com.ait.lienzo.client.core.shape.wires.event.WiresDragMoveEvent;
-import com.ait.lienzo.client.core.shape.wires.event.WiresDragMoveHandler;
-import com.ait.lienzo.client.core.shape.wires.event.WiresDragStartEvent;
-import com.ait.lienzo.client.core.shape.wires.event.WiresDragStartHandler;
-import com.ait.lienzo.client.core.shape.wires.event.WiresMoveEvent;
-import com.ait.lienzo.client.core.shape.wires.event.WiresMoveHandler;
-import com.ait.lienzo.client.core.shape.wires.event.WiresResizeEndEvent;
-import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStartEvent;
-import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStepEvent;
+import com.ait.lienzo.client.core.shape.wires.event.*;
+import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.tooling.nativetools.client.event.HandlerRegistrationManager;
+
+import java.util.Iterator;
 
 /**
  * This class handles the Wires Shape controls to provide additional features.
@@ -315,19 +300,22 @@ public class WiresShapeControlHandleList implements IControlHandleList
 
     protected void resize(final Double x, final Double y, final double width, final double height, final boolean refresh)
     {
-        if (null != x && null != y)
-        {
-            m_wires_shape.getLayoutContainer().setOffset(new Point2D(x, y));
-        }
 
-        m_wires_shape.getLayoutContainer().setSize(width, height);
+        final BoundingBox bb = new BoundingBox(null != x ? x : 0d,
+                null != y ? y : 0d,
+                width,
+                height);
+        m_wires_shape.getLayoutContainer().forBoundingBox(new ILayoutContainer.BoundingBoxSupplier() {
+            @Override
+            public BoundingBox get() {
+                return bb;
+            }
+        });
 
         if (refresh)
         {
             m_wires_shape.getLayoutContainer().refresh();
         }
-
-        m_wires_shape.getLayoutContainer().execute();
 
         if (null != m_wires_shape.getControl()) {
             m_wires_shape.getControl().getMagnetsControl().shapeChanged();

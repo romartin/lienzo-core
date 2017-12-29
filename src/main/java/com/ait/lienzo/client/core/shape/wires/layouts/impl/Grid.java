@@ -14,26 +14,23 @@
    limitations under the License.
  */
 
-package com.ait.lienzo.client.core.shape.wires.layouts.grids;
+package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
 public class Grid {
 
     private final int _columns;
     private final int _rows;
 
-    public Grid(final int columns, final int rows)
-    {
+    public Grid(final int columns, final int rows) {
         _columns = columns;
         _rows = rows;
     }
 
-    public int getColumns()
-    {
+    public int getColumns() {
         return _columns;
     }
 
-    public int getRows()
-    {
+    public int getRows() {
         return _rows;
     }
 

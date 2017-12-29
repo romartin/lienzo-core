@@ -17,26 +17,18 @@
 package com.ait.lienzo.client.core.shape.wires.layouts;
 
 import com.ait.lienzo.client.core.shape.Group;
-import com.ait.lienzo.client.core.shape.IPrimitive;
-import com.ait.lienzo.client.core.types.Point2D;
+import com.ait.lienzo.client.core.types.BoundingBox;
 
-public interface ILayoutContainer<L>
-{
-    ILayoutContainer setOffset(Point2D offset);
+public interface ILayoutContainer<T extends ILayoutContainer> {
 
-    ILayoutContainer setSize(double width, double height);
+    public interface BoundingBoxSupplier {
+        BoundingBox get();
+    }
 
-    ILayoutContainer add(IPrimitive<?> child);
+    T forBoundingBox(BoundingBoxSupplier supplier);
 
-    ILayoutContainer remove(IPrimitive<?> child);
+    T refresh();
 
-    ILayoutContainer execute();
+    Group asGroup();
 
-    ILayoutContainer refresh();
-
-    Group getGroup();
-
-    L getLayout();
-
-    void destroy();
 }
