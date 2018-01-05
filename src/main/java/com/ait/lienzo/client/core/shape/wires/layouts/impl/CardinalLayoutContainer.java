@@ -4,7 +4,7 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
 
 public class CardinalLayoutContainer
-        extends AbstractLayoutContainer<CardinalLayoutContainer> {
+        extends DelegateLayoutContainer<CardinalLayoutContainer> {
 
     public enum Cardinal {
         CENTER,
@@ -21,18 +21,21 @@ public class CardinalLayoutContainer
     private final GridLayoutContainer gridLayoutContainer;
 
     public CardinalLayoutContainer() {
-        this.gridLayoutContainer = new GridLayoutContainer(3, 3);
+        this.gridLayoutContainer = new GridLayoutContainer(3,
+                                                           3);
     }
 
     public CardinalLayoutContainer add(final IPrimitive<?> child,
                                        final Cardinal cardinal) {
         final int[] gridLocation = getGridLocation(cardinal);
-        getGridLayoutContainer().add(child, gridLocation[0], gridLocation[1]);
+        getGridLayoutContainer().add(child,
+                                     gridLocation[0],
+                                     gridLocation[1]);
         return this;
     }
 
-    public CardinalLayoutContainer setCardinal(final IPrimitive<?> child,
-                                               final Cardinal cardinal) {
+    public CardinalLayoutContainer set(final IPrimitive<?> child,
+                                       final Cardinal cardinal) {
         final GridLayoutEntry entry = getGridLayoutContainer().getDelegate().getEntry(child);
         final int[] gridLocation = getGridLocation(cardinal);
         entry.row(gridLocation[0]);

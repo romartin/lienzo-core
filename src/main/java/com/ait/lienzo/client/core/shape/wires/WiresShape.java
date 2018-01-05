@@ -17,61 +17,62 @@
 
 package com.ait.lienzo.client.core.shape.wires;
 
+import java.util.Map;
+import java.util.Objects;
+
 import com.ait.lienzo.client.core.event.IAttributesChangedBatcher;
-import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.MagnetManager.Magnets;
-import com.ait.lienzo.client.core.shape.wires.event.*;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeEndEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeEndHandler;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStartEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStartHandler;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStepEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStepHandler;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
 import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
-import com.ait.lienzo.client.core.shape.wires.layouts.impl.AbstractLayoutContainer;
 import com.ait.lienzo.client.core.shape.wires.layouts.impl.CardinalLayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
-import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import com.ait.tooling.nativetools.client.event.HandlerRegistrationManager;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import java.util.Map;
-import java.util.Objects;
-
 public class WiresShape extends WiresContainer
 {
 
-    private MultiPath                   m_drawnObject;
+    private final MultiPath             m_path;
 
     private Magnets                     m_magnets;
-
-    private AbstractLayoutContainer<?> m_innerILayoutContainer;
 
     private WiresShapeControlHandleList m_ctrls;
 
     private boolean                     m_resizable;
 
-    private WiresShapeControl           m_control;
+    private WiresShapeControl m_control;
 
-    public WiresShape(final MultiPath path)
-    {
-        this(path, new CardinalLayoutContainer());
+    public WiresShape(final MultiPath path) {
+        this(path,
+             new CardinalLayoutContainer());
     }
 
-    public WiresShape(final MultiPath path, final AbstractLayoutContainer<?> ILayoutContainer)
-    {
-        super(ILayoutContainer.asGroup());
-        this.m_drawnObject = path;
-        this.m_innerILayoutContainer = ILayoutContainer;
+    public WiresShape(final MultiPath path,
+                      final ILayoutContainer<?> layoutContainer) {
+        super(layoutContainer);
+        this.m_path = path;
         this.m_ctrls = null;
         init();
-
     }
 
-    WiresShape(final MultiPath path, final AbstractLayoutContainer<?> ILayoutContainer, final HandlerManager manager, final HandlerRegistrationManager registrationManager, final IAttributesChangedBatcher attributesChangedBatcher)
+    WiresShape(final MultiPath path,
+               final ILayoutContainer<?> layoutContainer,
+               final HandlerManager manager,
+               final HandlerRegistrationManager registrationManager,
+               final IAttributesChangedBatcher attributesChangedBatcher)
     {
-        super(ILayoutContainer.asGroup(), manager, registrationManager, attributesChangedBatcher);
-        this.m_drawnObject = path;
+        super(layoutContainer, manager, registrationManager, attributesChangedBatcher);
+        this.m_path = path;
         this.m_ctrls = null;
-        this.m_innerILayoutContainer = ILayoutContainer;
         init();
     }
 
@@ -81,16 +82,9 @@ public class WiresShape extends WiresContainer
         return this;
     }
 
-    public WiresShape addChild(final IPrimitive<?> child)
-    {
-        m_innerILayoutContainer.add(child);
-        return this;
-    }
-
-    public WiresShape removeChild(final IPrimitive<?> child)
-    {
-        m_innerILayoutContainer.remove(child);
-        return this;
+    @Override
+    public BoundingBox getBoundingBox() {
+        return getPath().getBoundingBox();
     }
 
     public WiresShapeControlHandleList getControls()
@@ -147,7 +141,7 @@ public class WiresShape extends WiresContainer
 
     public MultiPath getPath()
     {
-        return m_drawnObject;
+        return m_path;
     }
 
     public Magnets getMagnets()
@@ -191,31 +185,17 @@ public class WiresShape extends WiresContainer
                                                   @Override
                                                   public void onShapeResizeEnd(WiresResizeEndEvent event) {
                                                       handler.onShapeResizeEnd(event);
-                                                      m_innerILayoutContainer.refresh();
+                                                      getLayoutContainer().refresh();
                                                       refresh();
                                                   }
                                               });
-    }
-
-    public String uuid()
-    {
-        return getGroup().uuid();
     }
 
     private void init()
     {
         m_resizable = true;
 
-        m_innerILayoutContainer.forBoundingBox(new ILayoutContainer.BoundingBoxSupplier() {
-            @Override
-            public BoundingBox get() {
-                return WiresShape.this.getPath().refresh().getBoundingBox();
-            }
-        });
-
-        m_innerILayoutContainer.asGroup().setEventPropagationMode(EventPropagationMode.FIRST_ANCESTOR);
-
-        m_innerILayoutContainer.add(getPath());
+        add(getPath());
 
     }
 
@@ -272,11 +252,6 @@ public class WiresShape extends WiresContainer
         }
     }
 
-    public ILayoutContainer getLayoutContainer()
-    {
-        return m_innerILayoutContainer;
-    }
-
     @Override public boolean equals(Object o)
     {
         if (this == o)
@@ -288,9 +263,8 @@ public class WiresShape extends WiresContainer
             return false;
         }
 
-        WiresShape that = (WiresShape) o;
-
-        return getGroup().uuid() == that.getGroup().uuid();
+        final WiresShape that = (WiresShape) o;
+        return getGroup().uuid().equals(that.getGroup().uuid());
     }
 
     @Override public int hashCode()

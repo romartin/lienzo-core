@@ -41,8 +41,11 @@ import com.ait.lienzo.client.core.shape.wires.event.WiresDragStartEvent;
 import com.ait.lienzo.client.core.shape.wires.event.WiresDragStartHandler;
 import com.ait.lienzo.client.core.shape.wires.event.WiresMoveEvent;
 import com.ait.lienzo.client.core.shape.wires.event.WiresMoveHandler;
+import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
+import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.tooling.common.api.flow.Flows;
+import com.ait.tooling.common.api.java.util.function.Supplier;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 import com.ait.tooling.nativetools.client.event.HandlerRegistrationManager;
 import com.google.gwt.event.shared.HandlerManager;
@@ -56,7 +59,7 @@ public class WiresContainer
 
     private NFastArrayList<WiresShape>       m_childShapes;
 
-    private IContainer<?, IPrimitive<?>>     m_container;
+    private final ILayoutContainer<?>        m_layoutContainer;
 
     private WiresContainer                   m_parent;
 
@@ -70,26 +73,50 @@ public class WiresContainer
 
     private boolean                          m_dragging;
 
-    private ILayoutHandler                   m_layoutHandler       = ILayoutHandler.NONE;
-
     private final IAttributesChangedBatcher  attributesChangedBatcher;
 
     private final HandlerRegistrationManager m_registrationManager;
 
-    public WiresContainer(final IContainer<?, IPrimitive<?>> container)
+    public WiresContainer(final ILayoutContainer<?> m_layoutContainer)
     {
-        this(container, null, new HandlerRegistrationManager(), new AnimationFrameAttributesChangedBatcher());
+        this(m_layoutContainer,
+             null,
+             new HandlerRegistrationManager(),
+             new AnimationFrameAttributesChangedBatcher());
     }
 
-    WiresContainer( final IContainer<?, IPrimitive<?>> container, final HandlerManager m_events, final HandlerRegistrationManager m_registrationManager, final IAttributesChangedBatcher attributesChangedBatcher)
+    WiresContainer(final ILayoutContainer<?> m_layoutContainer,
+                   final HandlerManager m_events,
+                   final HandlerRegistrationManager m_registrationManager,
+                   final IAttributesChangedBatcher attributesChangedBatcher)
     {
-        this.m_container = container;
+        this.m_layoutContainer = m_layoutContainer;
         this.m_events = null != m_events ? m_events : new HandlerManager(this);
         this.m_dragging = false;
         this.m_drag_initialized = false;
         this.m_childShapes = new NFastArrayList<WiresShape>();
         this.m_registrationManager = m_registrationManager;
         this.attributesChangedBatcher = attributesChangedBatcher;
+        init();
+    }
+
+    private void init() {
+        m_layoutContainer.forBoundingBox(new Supplier<BoundingBox>() {
+            @Override
+            public BoundingBox get() {
+                return getBoundingBox();
+            }
+        });
+    }
+
+    public BoundingBox getBoundingBox() {
+        return getGroup().getBoundingBox();
+    }
+
+
+
+    public String uuid() {
+        return getContainer().uuid();
     }
 
     public WiresManager getWiresManager()
@@ -102,11 +129,17 @@ public class WiresContainer
         m_wiresManager = wiresManager;
     }
 
-    public IContainer<?, IPrimitive<?>> getContainer()
-    {
-        return m_container;
+    public ILayoutContainer<?> getLayoutContainer() {
+        return m_layoutContainer;
     }
 
+    // TODO: Refactor this.
+    public IContainer<?, IPrimitive<?>> getContainer()
+    {
+        return m_layoutContainer.getContainer();
+    }
+
+    // TODO: Refactor this.
     public Group getGroup()
     {
         return getContainer().asGroup();
@@ -138,11 +171,6 @@ public class WiresContainer
         return getGroup().getComputedLocation();
     }
 
-    public void setContainer(IContainer<?, IPrimitive<?>> container)
-    {
-        m_container = container;
-    }
-
     public WiresContainer getParent()
     {
         return m_parent;
@@ -158,16 +186,6 @@ public class WiresContainer
         return m_childShapes;
     }
 
-    public ILayoutHandler getLayoutHandler()
-    {
-        return m_layoutHandler;
-    }
-
-    public void setLayoutHandler( ILayoutHandler layoutHandler )
-    {
-        this.m_layoutHandler = layoutHandler;
-    }
-
     public void add(WiresShape shape)
     {
         if (shape.getParent() == this)
@@ -181,17 +199,16 @@ public class WiresContainer
 
         m_childShapes.add(shape);
 
-        m_container.add(shape.getGroup());
+        add(shape.getGroup());
 
         shape.setParent(this);
 
-       shape.shapeMoved();
+        shape.shapeMoved();
 
         if (null != m_wiresManager && m_wiresManager.getAlignAndDistribute().isShapeIndexed(shape.uuid())) {
             m_wiresManager.getAlignAndDistribute().getControlForShape(shape.uuid()).refresh();
         }
 
-        getLayoutHandler().requestLayout( this );
     }
 
     public void shapeMoved() {
@@ -213,17 +230,24 @@ public class WiresContainer
         {
             m_childShapes.remove(shape);
 
-            m_container.remove(shape.getGroup());
+            remove(shape.getGroup());
 
             shape.setParent(null);
         }
 
-        getLayoutHandler().requestLayout( this );
     }
 
     public void setDockedTo(WiresContainer dockedTo)
     {
         this.dockedTo = dockedTo;
+    }
+
+    public void add(IPrimitive<?> primitive) {
+        m_layoutContainer.getContainer().add(primitive);
+    }
+
+    public void remove(IPrimitive<?> primitive) {
+        m_layoutContainer.getContainer().remove(primitive);
     }
 
     public WiresContainer getDockedTo()
@@ -243,9 +267,10 @@ public class WiresContainer
 
     private void ensureHandlers()
     {
-        if ( !m_drag_initialized && null != m_container)
+        if ( !m_drag_initialized)
         {
 
+            final IContainer<?, IPrimitive<?>> m_container = m_layoutContainer.getContainer();
             m_registrationManager.register(m_container.addNodeDragStartHandler(new NodeDragStartHandler()
             {
                 @Override
@@ -349,7 +374,7 @@ public class WiresContainer
     {
         preDestroy();
         removeHandlers();
-        m_container.removeFromParent();
+        //  TODO: m_container.removeFromParent();
         m_parent = null;
     }
 

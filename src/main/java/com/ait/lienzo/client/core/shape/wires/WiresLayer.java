@@ -18,13 +18,14 @@
 package com.ait.lienzo.client.core.shape.wires;
 
 import com.ait.lienzo.client.core.shape.Layer;
+import com.ait.lienzo.client.core.shape.wires.layouts.impl.CartesianLayoutContainer;
 import com.ait.lienzo.client.core.types.Point2D;
 
 public class WiresLayer extends WiresContainer
 {
     public WiresLayer(Layer layer)
     {
-        super(layer);
+        super(new CartesianLayoutContainer(layer));
     }
 
     public Layer getLayer()

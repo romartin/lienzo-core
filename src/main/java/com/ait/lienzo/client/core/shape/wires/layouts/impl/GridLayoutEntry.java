@@ -12,7 +12,8 @@ public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
                            final int row,
                            final int column) {
         this.primitive = primitive;
-        this.gridEntry = new GridEntry(row, column);
+        this.gridEntry = new GridEntry(row,
+                                       column);
     }
 
     public GridLayoutEntry row(final int value) {
@@ -28,7 +29,9 @@ public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
     @Override
     public void refresh(final GridLayoutContainer container) {
         final double[] cellSize = container.getCellSize();
-        final Point2D location = getLocation(gridEntry, cellSize[0], cellSize[1]);
+        final Point2D location = getLocation(gridEntry,
+                                             cellSize[0],
+                                             cellSize[1]);
         primitive.setLocation(location);
     }
 
@@ -46,6 +49,7 @@ public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
     }
 
     private static class GridEntry {
+
         private int row;
         private int column;
 
@@ -63,7 +67,7 @@ public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
         final int row = entry.row;
         final double x = (cellWidth * column) + (cellWidth / 2);
         final double y = (cellHeight * row) + (cellHeight / 2);
-        return new Point2D(x, y);
+        return new Point2D(x,
+                           y);
     }
-
 }

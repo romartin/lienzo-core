@@ -21,7 +21,8 @@ public class Grid {
     private final int _columns;
     private final int _rows;
 
-    public Grid(final int columns, final int rows) {
+    public Grid(final int columns,
+                final int rows) {
         _columns = columns;
         _rows = rows;
     }
@@ -33,5 +34,4 @@ public class Grid {
     public int getRows() {
         return _rows;
     }
-
 }

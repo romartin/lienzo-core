@@ -8,5 +8,4 @@ public interface LayoutEntry<C extends ILayoutContainer<?>> {
     IPrimitive<?> getPrimitive();
 
     void refresh(C layoutContainer);
-
 }

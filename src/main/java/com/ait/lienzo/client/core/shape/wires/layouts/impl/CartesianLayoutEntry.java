@@ -30,7 +30,8 @@ public class CartesianLayoutEntry implements LayoutEntry<CartesianLayoutContaine
     @Override
     public void refresh(final CartesianLayoutContainer layoutContainer) {
         final BoundingBox boundingBox = layoutContainer.getBoundingBox();
-        checkBounds(location, boundingBox);
+        checkBounds(location,
+                    boundingBox);
         primitive.setLocation(location);
     }
 
@@ -46,8 +47,7 @@ public class CartesianLayoutEntry implements LayoutEntry<CartesianLayoutContaine
                 location.getY() <= y + height;
         if (!valid) {
             throw new IllegalArgumentException("The specified location [" + location + "] exceeds the parent " +
-                    "bounding box area [" + boundingBox + "]");
+                                                       "bounding box area [" + boundingBox + "]");
         }
     }
-
 }

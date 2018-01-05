@@ -1,7 +1,6 @@
 package com.ait.lienzo.client.core.shape.wires.handlers.impl;
 
 import com.ait.lienzo.client.core.shape.wires.IContainmentAcceptor;
-import com.ait.lienzo.client.core.shape.wires.PickerPart;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
@@ -62,7 +61,7 @@ public class WiresContainmentControlImpl extends AbstractWiresParentPickerContro
         final boolean isParentLayer = null == parent || parent instanceof WiresLayer;
         final WiresContainer candidateParent = isParentLayer ? m_layer : parent;
         final boolean isAllowed = containmentAcceptor.containmentAllowed(candidateParent,
-                                                           shapes);
+                                                                         shapes);
         if (!allowNotAccept && isAllowed) {
             return containmentAcceptor.acceptContainment(candidateParent,
                                                          shapes);
@@ -105,15 +104,13 @@ public class WiresContainmentControlImpl extends AbstractWiresParentPickerContro
                                final WiresContainer parent,
                                final Point2D location) {
         final WiresLayer m_layer = getWiresLayer();
+        // TODO: Delegate to ILayoutHandler (as before it was)?
         if (parent == null || parent == m_layer) {
-            m_layer.getLayoutHandler().add(shape,
-                                           m_layer,
-                                           location);
+            m_layer.add(shape);
         } else {
-            parent.getLayoutHandler().add(shape,
-                                          parent,
-                                          location);
+            parent.add(shape);
         }
+        shape.setLocation(location);
         shape.setDockedTo(null);
     }
 

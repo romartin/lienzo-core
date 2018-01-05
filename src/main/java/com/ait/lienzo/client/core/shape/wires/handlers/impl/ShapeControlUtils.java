@@ -16,6 +16,7 @@ import com.ait.lienzo.client.core.types.PathPartList;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.lienzo.client.core.util.Geometry;
+import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 
 public class ShapeControlUtils {
 

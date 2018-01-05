@@ -4,10 +4,11 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.types.BoundingBox;
 
 public class GridLayoutContainer
-        extends AbstractLayoutContainer<GridLayoutContainer> {
+        extends DelegateLayoutContainer<GridLayoutContainer> {
 
     private final LayoutEntriesContainer<GridLayoutEntry> layoutContainer;
     private final Grid grid;
+    private double[] cellSize;
 
     public GridLayoutContainer(final int rows,
                                final int columns) {
@@ -17,13 +18,17 @@ public class GridLayoutContainer
                 entry.refresh(GridLayoutContainer.this);
             }
         });
-        this.grid = new Grid(columns, rows);
+        this.grid = new Grid(columns,
+                             rows);
+        this.cellSize = null;
     }
 
     public GridLayoutContainer add(final IPrimitive<?> child,
                                    final int row,
                                    final int column) {
-        getDelegate().add(new GridLayoutEntry(child, row, column));
+        getDelegate().add(new GridLayoutEntry(child,
+                                              row,
+                                              column));
         return this;
     }
 
@@ -59,6 +64,12 @@ public class GridLayoutContainer
         return this;
     }
 
+    @Override
+    protected void onRefreshBounds() {
+        super.onRefreshBounds();
+        cellSize = null;
+    }
+
     public Grid getGrid() {
         return grid;
     }
@@ -68,16 +79,18 @@ public class GridLayoutContainer
     }
 
     double[] getCellSize() {
-        final BoundingBox bb = getBoundingBox();
-        final Grid grid = getGrid();
-        final double cellWidth = bb.getWidth() / grid.getColumns();
-        final double cellHeight = bb.getHeight() / grid.getRows();
-        return new double[]{cellWidth, cellHeight};
+        if (null == cellSize) {
+            final BoundingBox bb = getBoundingBox();
+            final Grid grid = getGrid();
+            final double cellWidth = bb.getWidth() / grid.getColumns();
+            final double cellHeight = bb.getHeight() / grid.getRows();
+            cellSize = new double[]{cellWidth, cellHeight};
+        }
+        return cellSize;
     }
 
     @Override
     protected LayoutEntriesContainer<GridLayoutEntry> getDelegate() {
         return layoutContainer;
     }
-
 }

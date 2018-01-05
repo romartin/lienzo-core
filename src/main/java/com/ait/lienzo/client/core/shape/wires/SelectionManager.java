@@ -906,15 +906,15 @@ public class SelectionManager implements NodeMouseDoubleClickHandler, NodeMouseC
             if (selectionBox.intersects(nodeBox))
             {
                 shapesList.add(shape);
-                shapesMap.put(shape.getContainer().uuid(), shape);
-                uuidMap.put(shape.getContainer().uuid(), nodeBox);
+                shapesMap.put(shape.uuid(), shape);
+                uuidMap.put(shape.uuid(), nodeBox);
             }
         }
 
         // add to removal list any shape whose parent is also in the selection
         for (WiresShape shape : shapesMap.values())
         {
-            if (null != shape.getParent() && shapesMap.containsKey(shape.getParent().getContainer().uuid()))
+            if (null != shape.getParent() && shapesMap.containsKey(shape.uuid()))
             {
                 toBeRemoved.add(shape); // can't remove yet, as it may have selected children itself, which will also need to be removed
             }
@@ -923,12 +923,12 @@ public class SelectionManager implements NodeMouseDoubleClickHandler, NodeMouseC
         // now the list is built, safely remove the shapes
         for (WiresShape shape : toBeRemoved)
         {
-            shapesMap.remove(shape.getContainer().uuid());
+            shapesMap.remove(shape.uuid());
         }
 
         for (WiresShape shape : shapesMap.values())
         {
-            nodeBox = uuidMap.get(shape.getContainer().uuid());
+            nodeBox = uuidMap.get(shape.uuid());
             m_selected.add(shape);
             box.add(nodeBox);
         }

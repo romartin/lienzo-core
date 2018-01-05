@@ -16,19 +16,16 @@
 
 package com.ait.lienzo.client.core.shape.wires.layouts;
 
-import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.IContainer;
+import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.types.BoundingBox;
+import com.ait.tooling.common.api.java.util.function.Supplier;
 
 public interface ILayoutContainer<T extends ILayoutContainer> {
 
-    public interface BoundingBoxSupplier {
-        BoundingBox get();
-    }
-
-    T forBoundingBox(BoundingBoxSupplier supplier);
+    T forBoundingBox(Supplier<BoundingBox> supplier);
 
     T refresh();
 
-    Group asGroup();
-
+    IContainer<?, IPrimitive<?>> getContainer();
 }

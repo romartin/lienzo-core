@@ -4,8 +4,8 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 
-public abstract class AbstractChildEntry
-{
+public abstract class AbstractChildEntry {
+
     private final String uuid;
 
     private Point2D initial_coords;
@@ -16,9 +16,7 @@ public abstract class AbstractChildEntry
 
     private final IPrimitive<?> child;
 
-
-    protected AbstractChildEntry(final IPrimitive<?> child)
-    {
+    protected AbstractChildEntry(final IPrimitive<?> child) {
         this.child = child;
         this.uuid = child.getID();
         this.initial_coords = null;
@@ -27,47 +25,35 @@ public abstract class AbstractChildEntry
         this.initial_height = null;
     }
 
-
-    public String getUUID()
-    {
+    public String getUUID() {
         return uuid;
     }
 
-
-    public double[] getInitialCoordinates()
-    {
-        if (!isReady())
-        {
+    public double[] getInitialCoordinates() {
+        if (!isReady()) {
             initializeChild();
         }
 
-        return new double[] { initial_coords.getX(), initial_coords.getY() };
-
+        return new double[]{initial_coords.getX(), initial_coords.getY()};
     }
 
-    public double getInitialWidth()
-    {
-        if (!isReady())
-        {
+    public double getInitialWidth() {
+        if (!isReady()) {
             initializeChild();
         }
 
         return initial_width;
     }
 
-    public double getInitialHeight()
-    {
-        if (!isReady())
-        {
+    public double getInitialHeight() {
+        if (!isReady()) {
             initializeChild();
         }
 
         return initial_height;
     }
 
-
-    private void initializeChild()
-    {
+    private void initializeChild() {
         final BoundingBox bb = child.getBoundingBox();
 
         final double[] c = getChildRelativeCoordinates(bb);
@@ -75,11 +61,11 @@ public abstract class AbstractChildEntry
         initial_width = bb.getWidth();
         initial_height = bb.getHeight();
 
-        initial_coords = new Point2D(c[0], c[1]);
+        initial_coords = new Point2D(c[0],
+                                     c[1]);
     }
 
-    private double[] getChildRelativeCoordinates(final BoundingBox bb)
-    {
+    private double[] getChildRelativeCoordinates(final BoundingBox bb) {
         final double bbx = bb.getX();
         final double bby = bb.getY();
         final double bbw = bb.getWidth();
@@ -88,30 +74,24 @@ public abstract class AbstractChildEntry
         final double x = -bbx - (bbw / 2);
         final double y = -bby - (bbh / 2);
 
-        return new double[] { x, y };
+        return new double[]{x, y};
     }
 
-
-    public void refresh()
-    {
+    public void refresh() {
         this.initial_coords = null;
         this.initial_width = null;
         this.initial_height = null;
     }
 
-    public boolean isReady()
-    {
+    public boolean isReady() {
         return null != initial_coords && null != initial_width && null != initial_height;
     }
 
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof AbstractChildEntry))
-        {
+        if (!(o instanceof AbstractChildEntry)) {
             return false;
         }
 
@@ -119,6 +99,4 @@ public abstract class AbstractChildEntry
 
         return uuid.equals(that.uuid);
     }
-
-
 }
