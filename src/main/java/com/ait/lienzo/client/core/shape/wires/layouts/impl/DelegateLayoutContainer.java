@@ -21,7 +21,7 @@ public abstract class DelegateLayoutContainer<T extends DelegateLayoutContainer>
     }
 
     public T add(final IPrimitive<?> primitive) {
-        getDelegate().getContainer().add(primitive);
+        getDelegate().get().add(primitive);
         return cast();
     }
 
@@ -33,8 +33,8 @@ public abstract class DelegateLayoutContainer<T extends DelegateLayoutContainer>
     }
 
     @Override
-    public IContainer<?, IPrimitive<?>> getContainer() {
-        return getDelegate().getContainer();
+    public IContainer<?, IPrimitive<?>> get() {
+        return getDelegate().get();
     }
 
     protected void onRefreshBounds() {

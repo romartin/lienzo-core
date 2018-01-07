@@ -1,6 +1,7 @@
 package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
 import com.ait.lienzo.client.core.shape.IPrimitive;
+import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 
 public class GridLayoutContainer
@@ -23,6 +24,15 @@ public class GridLayoutContainer
         this.cellSize = null;
     }
 
+    public GridLayoutContainer add(final ILayoutContainer<?> container,
+                                   final int row,
+                                   final int column) {
+        getDelegate().add(new GridLayoutContainerEntry(container,
+                                                       row,
+                                                       column));
+        return this;
+    }
+
     public GridLayoutContainer add(final IPrimitive<?> child,
                                    final int row,
                                    final int column) {
@@ -32,30 +42,39 @@ public class GridLayoutContainer
         return this;
     }
 
-    public GridLayoutContainer setRow(final IPrimitive<?> child,
-                                      final int row) {
-        final GridLayoutEntry entry = getDelegate().getEntry(child);
-        entry.row(row);
-        entry.refresh(this);
-        return this;
-    }
-
-    public GridLayoutContainer setColumn(final IPrimitive<?> child,
-                                         final int column) {
-        final GridLayoutEntry entry = getDelegate().getEntry(child);
-        entry.column(column);
-        entry.refresh(this);
-        return this;
-    }
-
     public GridLayoutContainer set(final IPrimitive<?> child,
                                    final int row,
                                    final int column) {
-        final GridLayoutEntry entry = getDelegate().getEntry(child);
+        final GridLayoutEntry entry = getEntry(child);
+        return set(entry,
+                   row,
+                   column);
+    }
+
+    public GridLayoutContainer set(final ILayoutContainer<?> layoutContainer,
+                                   final int row,
+                                   final int column) {
+        final GridLayoutContainerEntry entry = getContainerEntry(layoutContainer);
+        return set(entry,
+                   row,
+                   column);
+    }
+
+    private GridLayoutContainer set(final GridLayoutEntry entry,
+                                    final int row,
+                                    final int column) {
         entry.row(row);
         entry.column(column);
         entry.refresh(this);
         return this;
+    }
+
+    GridLayoutEntry getEntry(final IPrimitive<?> child) {
+        return getDelegate().getEntry(child);
+    }
+
+    GridLayoutContainerEntry getContainerEntry(final ILayoutContainer<?> layoutContainer) {
+        return (GridLayoutContainerEntry) getEntry((IPrimitive<?>) layoutContainer.get());
     }
 
     @Override

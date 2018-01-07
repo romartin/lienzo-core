@@ -2,6 +2,7 @@ package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.types.Point2D;
+import com.google.gwt.core.client.GWT;
 
 public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
 
@@ -32,6 +33,7 @@ public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
         final Point2D location = getLocation(gridEntry,
                                              cellSize[0],
                                              cellSize[1]);
+        GWT.log("GridLayoutEntyr - setLocation = [" + location + "]");
         primitive.setLocation(location);
     }
 
@@ -65,8 +67,8 @@ public class GridLayoutEntry implements LayoutEntry<GridLayoutContainer> {
                                        final double cellHeight) {
         final int column = entry.column;
         final int row = entry.row;
-        final double x = (cellWidth * column) + (cellWidth / 2);
-        final double y = (cellHeight * row) + (cellHeight / 2);
+        final double x = (cellWidth * column);
+        final double y = (cellHeight * row);
         return new Point2D(x,
                            y);
     }

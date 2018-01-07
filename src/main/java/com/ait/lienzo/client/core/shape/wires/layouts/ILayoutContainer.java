@@ -27,5 +27,5 @@ public interface ILayoutContainer<T extends ILayoutContainer> {
 
     T refresh();
 
-    IContainer<?, IPrimitive<?>> getContainer();
+    IContainer<?, IPrimitive<?>> get();
 }

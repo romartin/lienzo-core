@@ -25,37 +25,59 @@ public class CardinalLayoutContainer
                                                            3);
     }
 
+    public CardinalLayoutContainer add(final ILayoutContainer<?> child,
+                                       final Cardinal cardinal) {
+        final int[] gridLocation = getGridLocation(cardinal);
+        grid().add(child,
+                   gridLocation[0],
+                   gridLocation[1]);
+        return this;
+    }
+
     public CardinalLayoutContainer add(final IPrimitive<?> child,
                                        final Cardinal cardinal) {
         final int[] gridLocation = getGridLocation(cardinal);
-        getGridLayoutContainer().add(child,
-                                     gridLocation[0],
-                                     gridLocation[1]);
+        grid().add(child,
+                   gridLocation[0],
+                   gridLocation[1]);
         return this;
+    }
+
+    public CardinalLayoutContainer set(final ILayoutContainer<?> child,
+                                       final Cardinal cardinal) {
+        final GridLayoutEntry entry = grid().getContainerEntry(child);
+        return set(entry,
+                   cardinal);
     }
 
     public CardinalLayoutContainer set(final IPrimitive<?> child,
                                        final Cardinal cardinal) {
-        final GridLayoutEntry entry = getGridLayoutContainer().getDelegate().getEntry(child);
+        final GridLayoutEntry entry = grid().getEntry(child);
+        return set(entry,
+                   cardinal);
+    }
+
+    private CardinalLayoutContainer set(final GridLayoutEntry entry,
+                                        final Cardinal cardinal) {
         final int[] gridLocation = getGridLocation(cardinal);
         entry.row(gridLocation[0]);
         entry.column(gridLocation[1]);
-        entry.refresh(getGridLayoutContainer());
+        entry.refresh(grid());
         return this;
     }
 
     @Override
     public CardinalLayoutContainer remove(final IPrimitive<?> child) {
-        getGridLayoutContainer().remove(child);
+        grid().remove(child);
         return this;
     }
 
     @Override
     protected ILayoutContainer<?> getDelegate() {
-        return getGridLayoutContainer();
+        return grid();
     }
 
-    GridLayoutContainer getGridLayoutContainer() {
+    public GridLayoutContainer grid() {
         return gridLayoutContainer;
     }
 

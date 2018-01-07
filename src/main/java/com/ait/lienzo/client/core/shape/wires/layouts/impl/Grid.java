@@ -16,7 +16,7 @@
 
 package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
-public class Grid {
+public final class Grid {
 
     private final int _columns;
     private final int _rows;

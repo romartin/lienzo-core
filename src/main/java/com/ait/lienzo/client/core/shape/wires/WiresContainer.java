@@ -136,7 +136,7 @@ public class WiresContainer
     // TODO: Refactor this.
     public IContainer<?, IPrimitive<?>> getContainer()
     {
-        return m_layoutContainer.getContainer();
+        return m_layoutContainer.get();
     }
 
     // TODO: Refactor this.
@@ -243,11 +243,11 @@ public class WiresContainer
     }
 
     public void add(IPrimitive<?> primitive) {
-        m_layoutContainer.getContainer().add(primitive);
+        m_layoutContainer.get().add(primitive);
     }
 
     public void remove(IPrimitive<?> primitive) {
-        m_layoutContainer.getContainer().remove(primitive);
+        m_layoutContainer.get().remove(primitive);
     }
 
     public WiresContainer getDockedTo()
@@ -270,7 +270,7 @@ public class WiresContainer
         if ( !m_drag_initialized)
         {
 
-            final IContainer<?, IPrimitive<?>> m_container = m_layoutContainer.getContainer();
+            final IContainer<?, IPrimitive<?>> m_container = m_layoutContainer.get();
             m_registrationManager.register(m_container.addNodeDragStartHandler(new NodeDragStartHandler()
             {
                 @Override

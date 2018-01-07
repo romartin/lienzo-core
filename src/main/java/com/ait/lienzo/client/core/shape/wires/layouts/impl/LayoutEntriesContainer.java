@@ -47,7 +47,7 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
         }
         entries.put(entry.getPrimitive().getID(),
                     entry);
-        getContainer().add(entry.getPrimitive());
+        get().add(entry.getPrimitive());
         refresh(entry);
         return this;
     }
@@ -64,7 +64,7 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
         if (null != entry) {
             remove(entry);
         } else {
-            getContainer().remove(child);
+            get().remove(child);
         }
         return this;
     }
@@ -82,11 +82,13 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
     }
 
     private void refresh(final E entry) {
-        refreshExecutor.refresh(entry);
+        if (null != bbSupplier) {
+            refreshExecutor.refresh(entry);
+        }
     }
 
     @Override
-    public IContainer<?, IPrimitive<?>> getContainer() {
+    public IContainer<?, IPrimitive<?>> get() {
         return container;
     }
 
