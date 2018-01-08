@@ -2,7 +2,10 @@ package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
+import com.ait.lienzo.client.core.shape.wires.layouts.base.DelegateLayoutContainer;
+import com.ait.lienzo.client.core.shape.wires.layouts.base.LayoutEntriesContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
+import com.ait.tooling.common.api.java.util.function.Consumer;
 
 public class GridLayoutContainer
         extends DelegateLayoutContainer<GridLayoutContainer> {
@@ -13,9 +16,9 @@ public class GridLayoutContainer
 
     public GridLayoutContainer(final int rows,
                                final int columns) {
-        this.layoutContainer = new LayoutEntriesContainer<>(new LayoutEntriesContainer.LayoutEntryRefreshExecutor<GridLayoutEntry>() {
+        this.layoutContainer = new LayoutEntriesContainer<>(new Consumer<GridLayoutEntry>() {
             @Override
-            public void refresh(final GridLayoutEntry entry) {
+            public void accept(final GridLayoutEntry entry) {
                 entry.refresh(GridLayoutContainer.this);
             }
         });
@@ -75,12 +78,6 @@ public class GridLayoutContainer
 
     GridLayoutContainerEntry getContainerEntry(final ILayoutContainer<?> layoutContainer) {
         return (GridLayoutContainerEntry) getEntry((IPrimitive<?>) layoutContainer.get());
-    }
-
-    @Override
-    public GridLayoutContainer remove(final IPrimitive<?> child) {
-        getDelegate().remove(child);
-        return this;
     }
 
     @Override

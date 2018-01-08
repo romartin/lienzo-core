@@ -3,8 +3,11 @@ package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
+import com.ait.lienzo.client.core.shape.wires.layouts.base.DelegateLayoutContainer;
+import com.ait.lienzo.client.core.shape.wires.layouts.base.LayoutEntriesContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
+import com.ait.tooling.common.api.java.util.function.Consumer;
 
 //  TODO: Listen for and handle shape's transforming attributes changed.
 
@@ -22,10 +25,10 @@ public class CartesianLayoutContainer
                                                             container);
     }
 
-    private final LayoutEntriesContainer.LayoutEntryRefreshExecutor<CartesianLayoutEntry> refreshExecutor =
-            new LayoutEntriesContainer.LayoutEntryRefreshExecutor<CartesianLayoutEntry>() {
+    private final Consumer<CartesianLayoutEntry> refreshExecutor =
+            new Consumer<CartesianLayoutEntry>() {
                 @Override
-                public void refresh(final CartesianLayoutEntry entry) {
+                public void accept(final CartesianLayoutEntry entry) {
                     entry.refresh(CartesianLayoutContainer.this);
                 }
             };
@@ -42,12 +45,6 @@ public class CartesianLayoutContainer
         final CartesianLayoutEntry entry = getDelegate().getEntry(child);
         entry.setLocation(location);
         entry.refresh(this);
-        return this;
-    }
-
-    @Override
-    public CartesianLayoutContainer remove(final IPrimitive<?> child) {
-        getDelegate().remove(child);
         return this;
     }
 

@@ -1,6 +1,7 @@
 package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
 import com.ait.lienzo.client.core.shape.IPrimitive;
+import com.ait.lienzo.client.core.shape.wires.layouts.base.LayoutEntry;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 

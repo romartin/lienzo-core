@@ -4,7 +4,6 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.tooling.common.api.java.util.function.Supplier;
-import com.google.gwt.core.client.GWT;
 
 public class GridLayoutContainerEntry extends GridLayoutEntry {
 
@@ -30,7 +29,7 @@ public class GridLayoutContainerEntry extends GridLayoutEntry {
                                                          0d,
                                                          cellSize[0],
                                                          cellSize[1]);
-                        GWT.log("INNER CONTAINER FOR BB = [" + bb + "]");
+                        // GWT.log("INNER CONTAINER FOR BB = [" + bb + "]");
                         return bb;
                     }
                 }).refresh();

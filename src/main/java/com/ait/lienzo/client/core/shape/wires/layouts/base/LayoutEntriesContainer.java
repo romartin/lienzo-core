@@ -1,4 +1,4 @@
-package com.ait.lienzo.client.core.shape.wires.layouts.impl;
+package com.ait.lienzo.client.core.shape.wires.layouts.base;
 
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IContainer;
@@ -6,32 +6,28 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.tooling.common.api.java.util.UUID;
+import com.ait.tooling.common.api.java.util.function.Consumer;
 import com.ait.tooling.common.api.java.util.function.Supplier;
 import com.ait.tooling.nativetools.client.collection.NFastStringMap;
 
 public class LayoutEntriesContainer<E extends LayoutEntry>
         implements ILayoutContainer<LayoutEntriesContainer> {
 
-    public interface LayoutEntryRefreshExecutor<E extends LayoutEntry> {
-
-        public void refresh(E entry);
-    }
-
-    private final LayoutEntryRefreshExecutor<E> refreshExecutor;
+    private final Consumer<E> entryRefreshConsumer;
     private final IContainer<?, IPrimitive<?>> container;
     private final NFastStringMap<E> entries;
     private Supplier<BoundingBox> bbSupplier;
 
-    public LayoutEntriesContainer(final LayoutEntryRefreshExecutor<E> refreshExecutor) {
-        this(refreshExecutor,
+    public LayoutEntriesContainer(final Consumer<E> entryRefreshConsumer) {
+        this(entryRefreshConsumer,
              new Group()
                      .setDraggable(false));
     }
 
-    public LayoutEntriesContainer(final LayoutEntryRefreshExecutor<E> refreshExecutor,
+    public LayoutEntriesContainer(final Consumer<E> entryRefreshConsumer,
                                   final IContainer<?, IPrimitive<?>> container) {
         this.container = container;
-        this.refreshExecutor = refreshExecutor;
+        this.entryRefreshConsumer = entryRefreshConsumer;
         this.entries = new NFastStringMap<>();
     }
 
@@ -41,7 +37,7 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
         return this;
     }
 
-    LayoutEntriesContainer add(final E entry) {
+    public LayoutEntriesContainer add(final E entry) {
         if (null == entry.getPrimitive().getID()) {
             entry.getPrimitive().setID(UUID.uuid());
         }
@@ -52,14 +48,14 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
         return this;
     }
 
-    LayoutEntriesContainer remove(final E entry) {
+    public LayoutEntriesContainer remove(final E entry) {
         final String id = entry.getPrimitive().getID();
         entry.getPrimitive().removeFromParent();
         entries.remove(id);
         return this;
     }
 
-    LayoutEntriesContainer remove(final IPrimitive<?> child) {
+    public LayoutEntriesContainer remove(final IPrimitive<?> child) {
         final E entry = getEntry(child);
         if (null != entry) {
             remove(entry);
@@ -69,7 +65,7 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
         return this;
     }
 
-    E getEntry(final IPrimitive<?> child) {
+    public E getEntry(final IPrimitive<?> child) {
         return entries.get(child.getID());
     }
 
@@ -83,7 +79,7 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
 
     private void refresh(final E entry) {
         if (null != bbSupplier) {
-            refreshExecutor.refresh(entry);
+            entryRefreshConsumer.accept(entry);
         }
     }
 
@@ -92,7 +88,7 @@ public class LayoutEntriesContainer<E extends LayoutEntry>
         return container;
     }
 
-    BoundingBox getBoundingBox() {
+    public BoundingBox getBoundingBox() {
         return bbSupplier.get();
     }
 }

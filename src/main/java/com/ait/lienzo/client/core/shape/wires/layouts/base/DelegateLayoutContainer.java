@@ -1,4 +1,4 @@
-package com.ait.lienzo.client.core.shape.wires.layouts.impl;
+package com.ait.lienzo.client.core.shape.wires.layouts.base;
 
 import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
@@ -8,8 +8,6 @@ import com.ait.tooling.common.api.java.util.function.Supplier;
 
 public abstract class DelegateLayoutContainer<T extends DelegateLayoutContainer>
         implements ILayoutContainer<T> {
-
-    public abstract T remove(IPrimitive<?> child);
 
     protected abstract ILayoutContainer<?> getDelegate();
 
@@ -22,6 +20,11 @@ public abstract class DelegateLayoutContainer<T extends DelegateLayoutContainer>
 
     public T add(final IPrimitive<?> primitive) {
         getDelegate().get().add(primitive);
+        return cast();
+    }
+
+    public T remove(IPrimitive<?> child) {
+        getDelegate().get().remove(child);
         return cast();
     }
 

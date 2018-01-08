@@ -2,6 +2,7 @@ package com.ait.lienzo.client.core.shape.wires.layouts.impl;
 
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.wires.layouts.ILayoutContainer;
+import com.ait.lienzo.client.core.shape.wires.layouts.base.DelegateLayoutContainer;
 
 public class CardinalLayoutContainer
         extends DelegateLayoutContainer<CardinalLayoutContainer> {
@@ -63,12 +64,6 @@ public class CardinalLayoutContainer
         entry.row(gridLocation[0]);
         entry.column(gridLocation[1]);
         entry.refresh(grid());
-        return this;
-    }
-
-    @Override
-    public CardinalLayoutContainer remove(final IPrimitive<?> child) {
-        grid().remove(child);
         return this;
     }
 
