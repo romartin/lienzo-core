@@ -1,7 +1,9 @@
 package com.ait.lienzo.client.core.shape.wires.handlers.impl;
 
+import com.ait.lienzo.client.core.shape.wires.ILocationAcceptor;
 import com.ait.lienzo.client.core.shape.wires.PickerPart;
 import com.ait.lienzo.client.core.shape.wires.WiresConnector;
+import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.handlers.AlignAndDistributeControl;
@@ -10,10 +12,12 @@ import com.ait.lienzo.client.core.shape.wires.handlers.WiresContainmentControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresDockingControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresMagnetsControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
+import com.ait.lienzo.client.core.shape.wires.handlers.WiresSiblingControl;
 import com.ait.lienzo.client.core.shape.wires.picker.ColorMapBackedPicker;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.util.Geometry;
+import com.ait.tooling.common.api.java.util.function.BiPredicate;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 
 /**
@@ -25,6 +29,7 @@ public class WiresShapeControlImpl
         implements WiresShapeControl {
 
     private final WiresParentPickerCachedControl parentPickerControl;
+    private final WiresSiblingControl siblingControl;
     private WiresMagnetsControl m_magnetsControl;
     private WiresDockingControl m_dockingAndControl;
     private WiresContainmentControl m_containmentControl;
@@ -33,10 +38,11 @@ public class WiresShapeControlImpl
     private Point2D m_adjust;
     private boolean c_accept;
     private boolean d_accept;
+    private boolean s_accept;
     private WiresConnector[] m_connectorsWithSpecialConnections;
 
-    public WiresShapeControlImpl(WiresShape shape,
-                                 WiresManager wiresManager) {
+    public WiresShapeControlImpl(final WiresShape shape,
+                                 final WiresManager wiresManager) {
         final ColorMapBackedPicker.PickerOptions pickerOptions =
                 new ColorMapBackedPicker.PickerOptions(true,
                                                        wiresManager.getDockingAcceptor().getHotspotSize());
@@ -45,16 +51,29 @@ public class WiresShapeControlImpl
         m_dockingAndControl = new WiresDockingControlImpl(getParentPickerControl());
         m_containmentControl = new WiresContainmentControlImpl(getParentPickerControl());
         m_magnetsControl = new WiresMagnetsControlImpl(shape);
+        siblingControl = new WiresSiblingControlImpl(shape,
+                                                     getParentPickerControl())
+                .setActive(new BiPredicate<WiresContainer, WiresContainer>() {
+                    @Override
+                    public boolean test(final WiresContainer parent,
+                                        final WiresContainer shape) {
+                        return !m_containmentControl.isAllow() &&
+                                !m_dockingAndControl.isAllow() &&
+                                getLocationAcceptor().sibling(parent, shape);
+                    }
+                });
     }
 
-    public WiresShapeControlImpl(WiresParentPickerCachedControl parentPickerControl,
-                                 WiresMagnetsControl m_magnetsControl,
-                                 WiresDockingControl m_dockingAndControl,
-                                 WiresContainmentControl m_containmentControl) {
+    public WiresShapeControlImpl(final WiresParentPickerCachedControl parentPickerControl,
+                                 final WiresMagnetsControl m_magnetsControl,
+                                 final WiresDockingControl m_dockingAndControl,
+                                 final WiresContainmentControl m_containmentControl,
+                                 final WiresSiblingControl siblingControl) {
         this.parentPickerControl = parentPickerControl;
         this.m_magnetsControl = m_magnetsControl;
         this.m_dockingAndControl = m_dockingAndControl;
         this.m_containmentControl = m_containmentControl;
+        this.siblingControl = siblingControl;
     }
 
     @Override
@@ -64,6 +83,7 @@ public class WiresShapeControlImpl
         m_adjust = new Point2D(0, 0);
         d_accept = false;
         c_accept = false;
+        s_accept = false;
 
         // Important - skip the shape and its children, if any, from the picker.
         // Otherwise children or the shape itself are being processed by the parent picker
@@ -87,6 +107,11 @@ public class WiresShapeControlImpl
         if (m_containmentControl != null) {
             m_containmentControl.onMoveStart(x,
                                              y);
+        }
+
+        if (siblingControl != null) {
+            siblingControl.onMoveStart(x,
+                                       y);
         }
 
         // Delegate mvoe start to the align and distribute control.
@@ -117,7 +142,6 @@ public class WiresShapeControlImpl
         }
         return false;
     }
-
 
     @Override
     public boolean onMove(double dx,
@@ -178,6 +202,11 @@ public class WiresShapeControlImpl
             }
         }
 
+        if (null != siblingControl) {
+            siblingControl.onMove(dx,
+                                  dy);
+        }
+
         // Cache the current adjust point.
         m_adjust = dxy;
         parentPickerControl.onMoveAdjusted(m_adjust);
@@ -192,20 +221,23 @@ public class WiresShapeControlImpl
         Point2D location = null;
         d_accept = null != getDockingControl() && getDockingControl().accept();
         c_accept = !d_accept && null != getContainmentControl() && getContainmentControl().accept();
+        s_accept = null != siblingControl && siblingControl.accept();
 
         if (c_accept) {
             location = getContainmentControl().getCandidateLocation();
         } else if (d_accept) {
             location = getDockingControl().getCandidateLocation();
+        } else if (s_accept) {
+            location = siblingControl.getCandidateLocation();
         }
 
         boolean accept = false;
         if (null != location) {
-            accept = getShape().getWiresManager()
-                    .getLocationAcceptor()
+            accept = getLocationAcceptor()
                     .accept(new WiresShape[]{getShape()},
                             new Point2D[]{location});
         }
+
         return accept;
     }
 
@@ -216,22 +248,27 @@ public class WiresShapeControlImpl
         if (m_alignAndDistributeControl != null) {
             m_alignAndDistributeControl.dragEnd();
         }
+        if (null != siblingControl) {
+            siblingControl.onMoveComplete();
+        }
         return dcompleted && ccompleted;
     }
 
     @Override
     public void execute() {
-        final boolean accept = c_accept || d_accept;
+        final boolean accept = c_accept || d_accept || s_accept;
         if (!accept) {
             throw new IllegalStateException("Execute should not be called. No containment neither docking operations have been accepted.");
         }
-        final Point2D location = c_accept ?
-                getContainmentControl().getCandidateLocation() :
-                getDockingControl().getCandidateLocation();
+        Point2D location;
         if (d_accept) {
+            location = getDockingControl().getCandidateLocation();
             getDockingControl().execute();
-        } else {
+        } else if (c_accept) {
+            location = getContainmentControl().getCandidateLocation();
             getContainmentControl().execute();
+        } else {
+            location = siblingControl.getCandidateLocation();
         }
         getParentPickerControl().setShapeLocation(location);
         ShapeControlUtils.checkForAndApplyLineSplice(getWiresManager(),
@@ -249,6 +286,9 @@ public class WiresShapeControlImpl
         if (null != m_containmentControl) {
             m_containmentControl.clear();
         }
+        if (null != siblingControl) {
+            siblingControl.clear();
+        }
         clearState();
     }
 
@@ -263,6 +303,9 @@ public class WiresShapeControlImpl
         parentPickerControl.reset();
         if (null != m_alignAndDistributeControl) {
             m_alignAndDistributeControl.dragEnd();
+        }
+        if (null != siblingControl) {
+            siblingControl.reset();
         }
         getShape().shapeMoved();
         clearState();
@@ -345,5 +388,9 @@ public class WiresShapeControlImpl
 
     private ColorMapBackedPicker getPicker() {
         return parentPickerControl.getPicker();
+    }
+
+    private ILocationAcceptor getLocationAcceptor() {
+        return getShape().getWiresManager().getLocationAcceptor();
     }
 }

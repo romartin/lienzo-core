@@ -30,6 +30,9 @@ public interface ILocationAcceptor {
     public boolean accept(WiresContainer[] shapes,
                           Point2D[] locations);
 
+    public boolean sibling(WiresContainer parent,
+                           WiresContainer shape);
+
     public static class DefaultLocationAcceptor implements ILocationAcceptor {
 
         final private boolean m_defaultValue;
@@ -48,6 +51,12 @@ public interface ILocationAcceptor {
         public boolean accept(WiresContainer[] shapes,
                               Point2D[] locations) {
             return m_defaultValue;
+        }
+
+        @Override
+        public boolean sibling(WiresContainer parent,
+                               WiresContainer shape) {
+            return false;
         }
     }
 }
