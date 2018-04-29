@@ -159,7 +159,7 @@ public class WiresShapeControlImpl
         if (isDockAdjust) {
             final Point2D dadjust = m_dockingAndControl.getAdjust();
             double adjustDistance = Geometry.distance(dx, dy, dadjust.getX(), dadjust.getY());
-            if (adjustDistance > getWiresManager().getDockingAcceptor().getHotspotSize()) {
+            if (adjustDistance < getWiresManager().getDockingAcceptor().getHotspotSize()) {
                 dxy.setX(dadjust.getX());
                 dxy.setY(dadjust.getY());
             }
@@ -246,15 +246,13 @@ public class WiresShapeControlImpl
         if (!accept) {
             throw new IllegalStateException("Execute should not be called. No containment neither docking operations have been accepted.");
         }
-        final Point2D location = c_accept ?
-                getContainmentControl().getCandidateLocation() :
-                getDockingControl().getCandidateLocation();
+
+        // It's expected the execute() also sets the location
         if (d_accept) {
             getDockingControl().execute();
         } else {
             getContainmentControl().execute();
         }
-        getParentPickerControl().setShapeLocation(location);
         ShapeControlUtils.checkForAndApplyLineSplice(getWiresManager(),
                                                      getShape());
         shapeUpdated(true);
@@ -346,7 +344,6 @@ public class WiresShapeControlImpl
     private void shapeUpdated(final boolean isAcceptOp) {
         ShapeControlUtils.updateSpecialConnections(m_connectorsWithSpecialConnections,
                                                    isAcceptOp);
-        ShapeControlUtils.updateNestedShapes(getShape());
     }
 
     private void clearState() {
