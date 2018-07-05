@@ -164,7 +164,7 @@ public class WiresDockingControlImpl extends AbstractWiresParentPickerControl
     @Override
     public void destroy() {
         clear();
-        removeHandlers();
+        m_handlerRegistrations.destroy();
         m_absDockPosition = null;
         m_magnet = null;
     }
