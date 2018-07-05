@@ -288,6 +288,21 @@ public class WiresShapeControlImpl
     }
 
     @Override
+    public void destroy() {
+        clearState();
+        if (null != getDockingControl()) {
+            getDockingControl().destroy();
+        }
+        if (null != getContainmentControl()) {
+            getContainmentControl().destroy();
+        }
+        parentPickerControl.destroy();
+        if (null != m_alignAndDistributeControl) {
+            m_alignAndDistributeControl.dragEnd();
+        }
+    }
+
+    @Override
     public void onMouseClick(MouseEvent event) {
         parentPickerControl.onMouseClick(event);
         if (getWiresManager().getSelectionManager() != null) {

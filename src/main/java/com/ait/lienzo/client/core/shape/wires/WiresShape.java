@@ -284,7 +284,7 @@ public class WiresShape extends WiresContainer
 
         if (null != getControl())
         {
-            getControl().reset();
+            getControl().destroy();
             m_control = null;
         }
     }

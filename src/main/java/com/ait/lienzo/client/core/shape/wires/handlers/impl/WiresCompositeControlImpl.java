@@ -270,6 +270,13 @@ public class WiresCompositeControlImpl
     }
 
     @Override
+    public void destroy() {
+        for (WiresShape shape : selectedShapes) {
+            shape.getControl().destroy();
+        }
+    }
+
+    @Override
     public Point2D getAdjust() {
         return delta;
     }
