@@ -50,7 +50,8 @@ public class LienzoExamples implements EntryPoint {
                     new MovieExample("Video"),
                     new DrawImageExample("Draw Image"),
                     new PerformanceMainThreadBlockingExample("Performance - Thread blocking"),
-                    new PerformanceRenderingTestsExample("Performance - Rendering tests")
+                    new PerformanceRenderingTestsExample("Performance - Rendering tests"),
+                    new PerformanceMultipleCanvasTestsExample("Performance - Multiple canvas")
                    );
     }
 

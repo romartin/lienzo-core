@@ -94,8 +94,12 @@ public abstract class BaseExample implements Example {
         height = panel.getHeight();
     }
 
+    public static HTMLDivElement createDiv() {
+        return (HTMLDivElement) DomGlobal.document.createElement("div");
+    }
+
     public static HTMLDivElement createText(String text) {
-        HTMLDivElement div = (HTMLDivElement) DomGlobal.document.createElement("div");
+        HTMLDivElement div = createDiv();
         div.textContent = text;
         return div;
     }
