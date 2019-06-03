@@ -1,10 +1,7 @@
 package org.roger600;
 
 import com.ait.lienzo.client.core.shape.Shape;
-import com.ait.lienzo.client.core.types.BoundingBox;
-import com.ait.lienzo.client.core.types.BoundingPoints;
 import com.ait.lienzo.client.core.types.Point2DArray;
-import com.ait.lienzo.tools.client.Console;
 
 public class Util {
 
@@ -21,14 +18,13 @@ public class Util {
         return value;
     }
 
-    public static final void setLocation(Shape shape,
-                                         int viewWidth, int viewHeight,
-                                         int leftPadding, int topPadding, int rightPadding, int bottomPadding) {
-
+    public static final double[] getRandomLocation(Shape shape,
+                                                   int viewWidth, int viewHeight,
+                                                   int leftPadding, int topPadding, int rightPadding, int bottomPadding) {
         // this is needed as some shapes, like circles and multipaths, won't have same x,y result as rectangle
-        Point2DArray points  = shape.getBoundingPoints().getArray();
-        double       xOffset = points.get(0).getX() - shape.getX();
-        double       yOffset = points.get(0).getY() - shape.getY();
+        Point2DArray points = shape.getBoundingPoints().getArray();
+        double xOffset = points.get(0).getX() - shape.getX();
+        double yOffset = points.get(0).getY() - shape.getY();
 
         double shapeWidth = points.get(1).getX() - points.get(0).getX();
         double shapeHeight = points.get(3).getY() - points.get(0).getY();
@@ -42,7 +38,14 @@ public class Util {
         x = x + leftPadding + shape.getStrokeWidth() - xOffset;
         y = y + topPadding + shape.getStrokeWidth() - yOffset;
 
-        shape.setX(x).setY(y);
+        return new double[]{x, y};
+    }
+
+    public static final void setLocation(Shape shape,
+                                         int viewWidth, int viewHeight,
+                                         int leftPadding, int topPadding, int rightPadding, int bottomPadding) {
+        double[] location = getRandomLocation(shape, viewWidth, viewHeight, leftPadding, topPadding, rightPadding, bottomPadding);
+        shape.setX(location[0]).setY(location[1]);
     }
 
     public static final int randomNumber(int value, double factor) {
@@ -62,8 +65,7 @@ public class Util {
         return (a + Math.random() * (b - a));
     }
 
-    public static final <T> T randomValue(T[] values)
-    {
+    public static final <T> T randomValue(T[] values) {
         return values[randomIntBetween(0, values.length)];
     }
 }

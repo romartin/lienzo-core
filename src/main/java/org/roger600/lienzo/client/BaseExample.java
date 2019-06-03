@@ -1,7 +1,7 @@
 package org.roger600.lienzo.client;
 
-import org.gwtproject.dom.style.shared.Display;
-import org.roger600.Util;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import com.ait.lienzo.client.core.mediator.EventFilter;
 import com.ait.lienzo.client.core.mediator.MousePanMediator;
@@ -9,16 +9,24 @@ import com.ait.lienzo.client.core.mediator.MouseWheelZoomMediator;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.widget.LienzoPanel2;
-
+import elemental2.dom.CSSProperties;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLOptionElement;
+import elemental2.dom.HTMLSelectElement;
+import org.roger600.Util;
 
-public abstract class BaseExample implements Example
-{
+import static elemental2.dom.DomGlobal.document;
+
+public abstract class BaseExample implements Example {
+
     private String title;
     protected LienzoPanel2 panel;
-    protected Layer        layer;
+    protected Layer layer;
 
-    protected Console      console;
+    protected Console console;
 
     protected int width;
     protected int height;
@@ -33,21 +41,18 @@ public abstract class BaseExample implements Example
 
     protected HTMLDivElement topDiv;
 
-    public BaseExample(final String title)
-    {
+    public BaseExample(final String title) {
         this.title = title;
         console = new Console();
     }
 
     @Override
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
     @Override
-    public void init(final LienzoPanel2 panel, HTMLDivElement topDiv)
-    {
+    public void init(final LienzoPanel2 panel, HTMLDivElement topDiv) {
         this.topDiv = topDiv;
 
         this.panel = panel;
@@ -64,32 +69,73 @@ public abstract class BaseExample implements Example
         this.panel.getViewport().pushMediator(pan);
     }
 
-    @Override public int getWidthOffset()
-    {
+    @Override
+    public int getWidthOffset() {
         return widthOffset;
     }
 
-    @Override public int getHeightOffset()
-    {
+    @Override
+    public int getHeightOffset() {
         return heightOffset;
     }
 
-    public void setRandomLocation(Shape shape)
-    {
+    public void setRandomLocation(Shape shape) {
         Util.setLocation(shape, width, height, leftPadding, topPadding, rightPadding, bottomPadding);
     }
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
         panel.destroy();
     }
 
-
     @Override
-    public void onResize()
-    {
+    public void onResize() {
         width = panel.getWidth();
         height = panel.getHeight();
+    }
+
+    public static HTMLDivElement createText(String text) {
+        HTMLDivElement div = (HTMLDivElement) DomGlobal.document.createElement("div");
+        div.textContent = text;
+        return div;
+    }
+
+    public static HTMLButtonElement createButton(String text,
+                                                 Runnable clickCallback) {
+        HTMLButtonElement button = (HTMLButtonElement) DomGlobal.document.createElement("button");
+        button.textContent = text;
+        setMargins(button);
+        button.onclick = (e) -> {
+            clickCallback.run();
+            return null;
+        };
+        return button;
+    }
+
+    public static HTMLSelectElement createSelect(Map<String, String> options,
+                                                 Consumer<String> selectCallback) {
+        HTMLSelectElement select = (HTMLSelectElement) document.createElement("select");
+        options.entrySet().forEach(entry -> addOption(select, entry.getKey(), entry.getValue()));
+        setMargins(select);
+        select.onchange = (e) -> {
+            selectCallback.accept(select.value);
+            return null;
+        };
+
+        return select;
+    }
+
+    public static void addOption(HTMLSelectElement select,
+                                 String label,
+                                 String value) {
+        HTMLOptionElement option = (HTMLOptionElement) document.createElement("option");
+        option.label = label;
+        option.value = value;
+        select.add(option);
+    }
+
+    private static void setMargins(HTMLElement e) {
+        e.style.marginLeft = CSSProperties.MarginLeftUnionType.of("5px");
+        e.style.marginRight = CSSProperties.MarginRightUnionType.of("5px");
     }
 }

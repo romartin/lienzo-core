@@ -48,7 +48,9 @@ public class LienzoExamples implements EntryPoint {
                     new CornerRadiusExample("Corner Radius"),
                     new ShapesExample("Shapes Example"),
                     new MovieExample("Video"),
-                    new DrawImageExample("Draw Image")
+                    new DrawImageExample("Draw Image"),
+                    new PerformanceMainThreadBlockingExample("Performance - Thread blocking"),
+                    new PerformanceRenderingTestsExample("Performance - Rendering tests")
                    );
     }
 
