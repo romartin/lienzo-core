@@ -12,8 +12,10 @@ import com.ait.lienzo.shared.core.types.ColorName;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.Worker;
 import org.gwtproject.dom.style.shared.Display;
 import org.roger600.lienzo.client.util.FPSCounter;
+import org.roger600.lienzo.client.util.WorkerUtils;
 
 /*
     See https://developers.google.com/web/updates/2018/08/offscreen-canvas
@@ -28,9 +30,13 @@ public class PerformanceMainThreadBlockingExample extends BaseExample implements
     }
 
     private HTMLButtonElement makeMainThreadBusyButton;
+    private HTMLButtonElement runWorkerButton;
+    private HTMLButtonElement terminateWorkerButton;
+
     private Circle circle;
     private IAnimationHandle animationHandle;
     private FPSCounter fpsCounter;
+    private Worker worker;
 
     @Override
     public void init(LienzoPanel2 panel,
@@ -55,6 +61,12 @@ public class PerformanceMainThreadBlockingExample extends BaseExample implements
                                                     makeMainThreadBusyButton.disabled = false;
                                                 });
         topDiv.appendChild(makeMainThreadBusyButton);
+
+        runWorkerButton = createButton("Run worker", this::runWorker);
+        topDiv.appendChild(runWorkerButton);
+
+        terminateWorkerButton = createButton("Terminate worker", this::terminateWorker);
+        topDiv.appendChild(terminateWorkerButton);
     }
 
     @Override
@@ -70,6 +82,8 @@ public class PerformanceMainThreadBlockingExample extends BaseExample implements
         fpsCounter.destroy();
         fpsCounter = null;
         makeMainThreadBusyButton.remove();
+        runWorkerButton.remove();
+        terminateWorkerButton.remove();
     }
 
     private void runAnimatedCircleTest() {
@@ -103,12 +117,25 @@ public class PerformanceMainThreadBlockingExample extends BaseExample implements
     }
 
     private void makeMainThreadBusy() {
-        console.log("Making main thread busy...");
-        fibonacci(40);
-        console.log("Main thread free again");
+        SomeJob.run(s -> console.log(s));
     }
 
-    private static int fibonacci(int num) {
+    private void terminateWorker() {
+        if (null != worker) {
+            console.log("Terminating worker...");
+            worker.terminate();
+            worker = null;
+        }
+    }
+
+    private void runWorker() {
+        terminateWorker();
+        console.log("Running worker...");
+        String script = "goog.module.get('SomeJob$impl').run(s => console.log(s))";
+        worker = WorkerUtils.runWorker(script, "");
+    }
+
+    public static int fibonacci(int num) {
         return (num <= 1) ? 1 : fibonacci(num - 1) + fibonacci(num - 2);
     }
 }

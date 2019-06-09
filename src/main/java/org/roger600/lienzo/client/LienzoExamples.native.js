@@ -22,11 +22,17 @@
 // and if it runs right away, will not have its dependencies resolved yet (at least while
 // running in BUNDLE).
 setTimeout(function(){
-  // Call the java "constructor" method, `new` will only work if it is a @JsType, or maybe
-  // once optimized. Without this, in BUNDLE mode, `new` doesn't include the clinit, so
-  // static imports haven't been resolved yet.
-  var ep = LienzoExamples.$create__();
-  // Invoke onModuleLoad to start the app.
-  ep.m_onModuleLoad__()
+  // Skip module execution inside a web worker context.
+  if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+    console.log('Not loading LienzoExamples module because of a web worker scope');
+  } else {
+    // Call the java "constructor" method, `new` will only work if it is a @JsType, or maybe
+    // once optimized. Without this, in BUNDLE mode, `new` doesn't include the clinit, so
+    // static imports haven't been resolved yet.
+    var ep = LienzoExamples.$create__();
+    // Invoke onModuleLoad to start the app.
+    ep.m_onModuleLoad__()
+  }
+
 }, 0);
 
