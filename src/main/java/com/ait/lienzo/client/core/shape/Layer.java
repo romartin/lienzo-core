@@ -576,7 +576,7 @@ public class Layer extends ContainerNode<IPrimitive<?>, Layer>
         {
             if (null == m_element)
             {
-                m_element = (HTMLCanvasElement) DomGlobal.document.createElement("canvas"); //Document.get().createCanvasElement();
+                m_element = LienzoCore.createCanvas();
 
                 m_element.style.position = Style.Position.ABSOLUTE.getCssName();
 

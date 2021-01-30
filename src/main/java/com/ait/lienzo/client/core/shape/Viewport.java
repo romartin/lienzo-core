@@ -422,7 +422,9 @@ public class Viewport extends ContainerNode<Scene, Viewport> implements EventRec
     {
         m_back.removeAll();
 
-        m_back.add(layer);
+        if (null != layer) {
+            m_back.add(layer);
+        }
 
         return this;
     }

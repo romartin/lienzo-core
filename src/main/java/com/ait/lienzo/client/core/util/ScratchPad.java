@@ -42,7 +42,7 @@ public final class ScratchPad
 
         if (LienzoCore.IS_CANVAS_SUPPORTED)
         {
-            m_element = (HTMLCanvasElement) DomGlobal.document.createElement("canvas"); // Document.get().createCanvasElement();
+            m_element = LienzoCore.createCanvas();
 
             m_element.width = wide;
 

@@ -101,6 +101,10 @@ public class WiresContainer
         return m_container;
     }
 
+    public void setID(String id) {
+        getContainer().setID(id);
+    }
+
     public Group getGroup()
     {
         return getContainer().asGroup();
