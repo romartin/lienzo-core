@@ -53,6 +53,7 @@ public class ScrollablePanel extends LienzoBoundsPanel {
     private RestrictedMousePanMediator panMediator;
     private ResizeObserver resizeObserver;
     private ResizeCallback m_resizeCallback;
+    private static int PADDING_OFFSET = 4;
 
     public static ScrollablePanel newPanel(final BoundsProvider layerBoundsProvider) {
         return new ScrollablePanel(layerBoundsProvider);
@@ -390,14 +391,12 @@ public class ScrollablePanel extends LienzoBoundsPanel {
 
     private void updatePanelsSizes(final int widePx,
                                    final int highPx) {
-        setPanelSize(scrollPanel, widePx, highPx);
-        // TODO: Scrollbar's width/height is actually so... so divs overlap and it's not possible to click on scrollbars
-        // final int scrollbarWidth = scrollbarWidth();
-        // final int scrollbarHeight = scrollbarHeight();
-        final int scrollbarWidth = 10;
-        final int scrollbarHeight = 10;
-        final int w = widePx - scrollbarWidth;
-        final int h = highPx - scrollbarHeight;
+        // Adjust high to avoid horizontal scrollbar overlap
+        final int highPxFixed = highPx - PADDING_OFFSET;
+
+        setPanelSize(scrollPanel, widePx, highPxFixed);
+        final int w = widePx - scrollbarWidth();
+        final int h = highPxFixed - scrollbarHeight();
         setPanelSize(domElementContainer, w, h);
         getLienzoPanel().setPixelSize(w, h);
     }
