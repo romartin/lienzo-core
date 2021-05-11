@@ -17,6 +17,8 @@ package com.ait.lienzo.client.widget.panel.impl;
 
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.style.Style;
+import com.ait.lienzo.client.core.style.Style.OutlineStyle;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.widget.panel.Bounds;
 import com.ait.lienzo.client.widget.panel.BoundsProvider;
@@ -74,10 +76,10 @@ public class ScrollablePanel extends LienzoBoundsPanel {
     @Override
     public LienzoBoundsPanel set(final Layer layer) {
         super.set(layer);
-        scrollPanel.style.position = "relative";
-        scrollPanel.style.overflow = "scroll";
-        internalScrollPanel.style.position = "absolute";
-        domElementContainer.style.position = "absolute";
+        scrollPanel.style.position = Style.Position.RELATIVE.getCssName();
+        scrollPanel.style.overflow = Style.Overflow.SCROLL.getCssName();
+        internalScrollPanel.style.position = Style.Position.ABSOLUTE.getCssName();
+        domElementContainer.style.position = Style.Position.ABSOLUTE.getCssName();
         domElementContainer.style.zIndex = CSSProperties.ZIndexUnionType.of(1);
         synchronizeScrollSize();
         // TODO setupMouseDragSynchronization();
@@ -239,7 +241,7 @@ public class ScrollablePanel extends LienzoBoundsPanel {
         domElementContainer.appendChild(getLienzoPanel().getElement());
         rootPanel.appendChild(domElementContainer);
         rootPanel.appendChild(scrollPanel);
-        rootPanel.style.outlineStyle = "none";
+        rootPanel.style.outlineStyle = OutlineStyle.NONE.getCssName();
 
         // Event listeners.
         mouseDownListener = e -> ScrollablePanel.this.onStart();

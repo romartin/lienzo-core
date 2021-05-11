@@ -25,13 +25,13 @@ import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Node;
 import com.ait.lienzo.client.core.shape.Scene;
 import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.style.Style.Cursor;
+import com.ait.lienzo.client.core.style.Style.OutlineStyle;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.widget.DragMouseControl;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.shared.core.types.DataURLType;
 import com.ait.lienzo.shared.core.types.IColor;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Cursor;
 import elemental2.dom.HTMLDivElement;
 
 public class LienzoFixedPanel extends LienzoPanel<LienzoFixedPanel>
@@ -76,7 +76,7 @@ public class LienzoFixedPanel extends LienzoPanel<LienzoFixedPanel>
             m_events = null;
         }
 
-        getElement().style.outlineStyle = Style.OutlineStyle.NONE.getCssName();
+        getElement().style.outlineStyle = OutlineStyle.NONE.getCssName();
     }
 
     public int getWidePx() {

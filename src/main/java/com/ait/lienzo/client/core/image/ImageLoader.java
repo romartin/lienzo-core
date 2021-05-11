@@ -16,8 +16,8 @@
 
 package com.ait.lienzo.client.core.image;
 
+import com.ait.lienzo.client.core.style.Style;
 import com.ait.lienzo.client.widget.RootPanel;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.impl.ImageResourcePrototype;
 import elemental2.dom.CSSProperties;
@@ -76,7 +76,7 @@ public abstract class ImageLoader
 
     public static void setVisible(HTMLElement image, boolean visible)
     {
-        image.style.display = visible ? "" : Display.NONE.getCssName(); // @FIXME check that it should really be "", I just followed GWT UIObject setVisible.
+        image.style.display = visible ? "" : Style.Display.NONE.getCssName(); // @FIXME check that it should really be "", I just followed GWT UIObject setVisible.
 
         if (visible) {
             image.removeAttribute("aria-hidden");

@@ -16,6 +16,7 @@
 
 package com.ait.lienzo.client.core;
 
+import com.ait.lienzo.client.core.style.Style;
 import com.ait.lienzo.client.core.types.LinearGradient.LinearGradientJSO;
 import com.ait.lienzo.client.core.types.PathPartEntryJSO;
 import com.ait.lienzo.client.core.types.PathPartListJSO;
@@ -23,7 +24,6 @@ import com.ait.lienzo.client.core.types.PatternGradient.PatternGradientJSO;
 import com.ait.lienzo.client.core.types.RadialGradient.RadialGradientJSO;
 import com.ait.lienzo.client.core.types.Shadow.ShadowJSO;
 import com.ait.lienzo.client.core.types.Transform;
-
 import elemental2.core.JsArray;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.CanvasGradient;
@@ -100,8 +100,8 @@ public class NativeContext2D extends CanvasRenderingContext2D {
             canvas.width = (int) Math.round(oldWidth * this.scalingRatio);
             canvas.height = (int) Math.round(oldHeight * this.scalingRatio);
 
-            canvas.style.width = CSSProperties.WidthUnionType.of(oldWidth + "px");
-            canvas.style.height = CSSProperties.HeightUnionType.of(oldHeight + "px");
+            canvas.style.width = CSSProperties.WidthUnionType.of(oldWidth + Style.Unit.PX.getType());
+            canvas.style.height = CSSProperties.HeightUnionType.of(oldHeight + Style.Unit.PX.getType());
 
             scale(this.scalingRatio, this.scalingRatio);
         }

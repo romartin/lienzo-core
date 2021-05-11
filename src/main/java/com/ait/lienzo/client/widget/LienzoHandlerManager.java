@@ -17,6 +17,7 @@
 package com.ait.lienzo.client.widget;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.ait.lienzo.client.core.config.LienzoCore;
 import com.ait.lienzo.client.core.event.AbstractNodeHumanInputEvent;
@@ -44,6 +45,7 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Node;
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.style.Style.Cursor;
 import com.ait.lienzo.gwtlienzo.event.shared.EventHandler;
 import com.ait.lienzo.shared.core.types.DragMode;
 import com.ait.lienzo.shared.core.types.EventPropagationMode;
@@ -52,8 +54,6 @@ import com.ait.lienzo.tools.client.event.EventType;
 import com.ait.lienzo.tools.client.event.HandlerRegistrationManager;
 import com.ait.lienzo.tools.client.event.INodeEvent.Type;
 import com.ait.lienzo.tools.client.event.MouseEventUtil;
-import java.util.function.Predicate;
-import com.google.gwt.dom.client.Style;
 import elemental2.dom.AddEventListenerOptions;
 import elemental2.dom.Event;
 import elemental2.dom.EventListener;
@@ -567,7 +567,7 @@ final public class LienzoHandlerManager
         {
             doDragMove(x, y, mouseEvent, touchEvent);
 
-            Style.Cursor cursor = m_lienzo.getNormalCursor();
+            Cursor cursor = m_lienzo.getNormalCursor();
 
             if (null == cursor)
             {
@@ -579,7 +579,7 @@ final public class LienzoHandlerManager
 
                     if (null == cursor)
                     {
-                        cursor = Style.Cursor.DEFAULT;
+                        cursor = Cursor.DEFAULT;
                     }
                 }
             }
@@ -618,7 +618,7 @@ final public class LienzoHandlerManager
         {
             doDragCancel(x, y, mouseEvent, touchEvent);
         }
-        Style.Cursor cursor = m_lienzo.getSelectCursor();
+        Cursor cursor = m_lienzo.getSelectCursor();
 
         if (null == cursor)
         {
@@ -626,7 +626,7 @@ final public class LienzoHandlerManager
 
             if (null == cursor)
             {
-                cursor = Style.Cursor.CROSSHAIR;
+                cursor = Cursor.CROSSHAIR;
             }
         }
         m_lienzo.setCursor(cursor);

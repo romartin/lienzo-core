@@ -41,6 +41,7 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.shape.storage.IStorageEngine;
 import com.ait.lienzo.client.core.shape.storage.ViewportFastArrayStorageEngine;
+import com.ait.lienzo.client.core.style.Style;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.core.util.ScratchPad;
@@ -51,9 +52,6 @@ import com.ait.lienzo.shared.core.types.NodeType;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import com.ait.lienzo.tools.client.event.HandlerRegistration;
 import com.ait.lienzo.tools.client.event.INodeEvent;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
@@ -248,9 +246,9 @@ public class Viewport extends ContainerNode<Scene, Viewport> implements EventRec
 
         m_high = high;
 
-        getElement().style.width = CSSProperties.WidthUnionType.of(wide + Unit.PX.getType());
+        getElement().style.width = CSSProperties.WidthUnionType.of(wide + Style.Unit.PX.getType());
 
-        getElement().style.height= CSSProperties.HeightUnionType.of(high + Unit.PX.getType());
+        getElement().style.height= CSSProperties.HeightUnionType.of(high + Style.Unit.PX.getType());
 
         final NFastArrayList<Scene> scenes = getChildNodes();
 
@@ -300,9 +298,9 @@ public class Viewport extends ContainerNode<Scene, Viewport> implements EventRec
 
             setScenePixelSize(scene, m_wide, m_high);
 
-            element.style.position = Position.ABSOLUTE.getCssName();
+            element.style.position = Style.Position.ABSOLUTE.getCssName();
 
-            element.style.display = Display.INLINE_BLOCK.getCssName();
+            element.style.display = Style.Display.INLINE_BLOCK.getCssName();
 
             getElement().appendChild(element);
 

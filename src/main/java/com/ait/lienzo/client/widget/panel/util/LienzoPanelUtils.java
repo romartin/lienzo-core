@@ -1,5 +1,6 @@
 package com.ait.lienzo.client.widget.panel.util;
 
+import com.ait.lienzo.client.core.style.Style;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import elemental2.core.JsNumber;
 import elemental2.dom.CSSProperties;
@@ -38,12 +39,12 @@ public class LienzoPanelUtils {
 
     public static void setPanelWidth(final HTMLDivElement panel,
                                      final int width) {
-        panel.style.width = CSSProperties.WidthUnionType.of(width + "px");
+        panel.style.width = CSSProperties.WidthUnionType.of(width + Style.Unit.PX.getType());
     }
 
     public static void setPanelHeight(final HTMLDivElement panel,
                                       final int height) {
-        panel.style.height = CSSProperties.HeightUnionType.of(height + "px");
+        panel.style.height = CSSProperties.HeightUnionType.of(height + Style.Unit.PX.getType());
     }
 
     public static void setPanelSize(final HTMLDivElement panel,

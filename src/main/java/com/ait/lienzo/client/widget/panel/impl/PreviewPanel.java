@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.style.Style.Cursor;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.widget.panel.Bounds;
@@ -26,7 +27,6 @@ import com.ait.lienzo.client.widget.panel.BoundsProvider;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.tools.client.event.HandlerManager;
-import com.google.gwt.dom.client.Style;
 import elemental2.dom.EventListener;
 
 public class PreviewPanel extends ScalablePanel
@@ -62,13 +62,13 @@ public class PreviewPanel extends ScalablePanel
                                                   @Override
                                                   public void onMouseEnter()
                                                   {
-                                                      getLienzoPanel().getElement().style.cursor = Style.Cursor.MOVE.getCssName();
+                                                      getLienzoPanel().getElement().style.cursor = Cursor.MOVE.getCssName();
                                                   }
 
                                                   @Override
                                                   public void onMouseExit()
                                                   {
-                                                      getLienzoPanel().getElement().style.cursor = Style.Cursor.DEFAULT.getCssName();
+                                                      getLienzoPanel().getElement().style.cursor = Cursor.DEFAULT.getCssName();
                                                   }
 
                                                   @Override

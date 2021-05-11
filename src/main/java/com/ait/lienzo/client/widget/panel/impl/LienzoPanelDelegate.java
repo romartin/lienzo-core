@@ -2,8 +2,8 @@ package com.ait.lienzo.client.widget.panel.impl;
 
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.style.Style.Cursor;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
-import com.google.gwt.dom.client.Style;
 import elemental2.dom.HTMLDivElement;
 
 public abstract class LienzoPanelDelegate<T extends LienzoPanelDelegate> extends LienzoPanel<T> {
@@ -23,7 +23,7 @@ public abstract class LienzoPanelDelegate<T extends LienzoPanelDelegate> extends
     }
 
     @Override
-    public T setCursor(Style.Cursor cursor) {
+    public T setCursor(Cursor cursor) {
         getPanel().setCursor(cursor);
         return cast();
     }

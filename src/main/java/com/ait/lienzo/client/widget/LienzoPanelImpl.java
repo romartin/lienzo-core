@@ -26,6 +26,9 @@ import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Node;
 import com.ait.lienzo.client.core.shape.Scene;
 import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.style.Style;
+import com.ait.lienzo.client.core.style.Style.Cursor;
+import com.ait.lienzo.client.core.style.Style.OutlineStyle;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.core.util.CursorMap;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
@@ -34,8 +37,6 @@ import com.ait.lienzo.shared.core.types.AutoScaleType;
 import com.ait.lienzo.shared.core.types.DataURLType;
 import com.ait.lienzo.shared.core.types.IColor;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Cursor;
 import elemental2.core.JsNumber;
 import elemental2.dom.CSSProperties.HeightUnionType;
 import elemental2.dom.CSSProperties.WidthUnionType;
@@ -160,7 +161,7 @@ public class LienzoPanelImpl extends LienzoPanel //extends FocusPanel implements
         if (LienzoCore.IS_CANVAS_SUPPORTED)
         {
 
-            HTMLDivElement divElement = Js.<HTMLDivElement>uncheckedCast(m_view.getElement());
+            HTMLDivElement divElement = Js.uncheckedCast(m_view.getElement());
 
             m_elm.appendChild(divElement);
 
@@ -179,7 +180,7 @@ public class LienzoPanelImpl extends LienzoPanel //extends FocusPanel implements
             m_events = null;
         }
 
-        m_elm.style.outlineStyle = Style.OutlineStyle.NONE.getCssName();
+        m_elm.style.outlineStyle = OutlineStyle.NONE.getCssName();
     }
 
     private void setWidth(int width)
@@ -323,11 +324,11 @@ public class LienzoPanelImpl extends LienzoPanel //extends FocusPanel implements
     {
         if (width >= 0) {
             m_width = width;
-            setWidth(width + "px");
+            setWidth(width + Style.Unit.PX.getType());
         }
         if (height >= 0) {
             m_height = height;
-            setHeight(height + "px");
+            setHeight(height + Style.Unit.PX.getType());
         }
 
         getViewport().setPixelSize(width, height);
@@ -573,9 +574,9 @@ public class LienzoPanelImpl extends LienzoPanel //extends FocusPanel implements
     public void setVisible(boolean visible)
     {
         if (visible) {
-            m_elm.style.display = "block"; //inline
+            m_elm.style.display = Style.Display.BLOCK.getCssName(); //inline
         } else {
-            m_elm.style.display = "none";
+            m_elm.style.display = Style.Display.NONE.getCssName();
         }
     }
 

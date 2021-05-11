@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import com.google.gwt.dom.client.Style.Cursor;
+import com.ait.lienzo.client.core.style.Style.Cursor;
 
 public final class CursorMap
 {

@@ -18,6 +18,7 @@ package com.ait.lienzo.client.core.shape;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.ait.lienzo.client.core.Attribute;
 import com.ait.lienzo.client.core.Context2D;
@@ -26,6 +27,7 @@ import com.ait.lienzo.client.core.shape.json.validators.ValidationContext;
 import com.ait.lienzo.client.core.shape.json.validators.ValidationException;
 import com.ait.lienzo.client.core.shape.storage.IStorageEngine;
 import com.ait.lienzo.client.core.shape.storage.SceneFastArrayStorageEngine;
+import com.ait.lienzo.client.core.style.Style;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.util.ScratchPad;
 import com.ait.lienzo.gwtlienzo.event.shared.EventHandler;
@@ -33,8 +35,6 @@ import com.ait.lienzo.shared.core.types.DataURLType;
 import com.ait.lienzo.shared.core.types.NodeType;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import com.ait.lienzo.tools.client.event.INodeEvent;
-import java.util.function.Predicate;
-import com.google.gwt.dom.client.Style.Unit;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
@@ -161,9 +161,9 @@ public class Scene extends ContainerNode<Layer, Scene>
         m_high = high;
 
         // @FIXME is this correct? (mdp)
-        m_element.style.width = CSSProperties.WidthUnionType.of(wide + Unit.PX.getType());
+        m_element.style.width = CSSProperties.WidthUnionType.of(wide + Style.Unit.PX.getType());
 
-        m_element.style.height = CSSProperties.HeightUnionType.of(high + Unit.PX.getType());
+        m_element.style.height = CSSProperties.HeightUnionType.of(high + Style.Unit.PX.getType());
 
         final NFastArrayList<Layer> layers = getChildNodes();
 
