@@ -635,12 +635,6 @@ public class ImageProxy<T extends AbstractImageShape<T>> implements ImageDataFil
         }
     }
 
-    /**
-     * Returns the "data:" URL
-     * 
-     * @param mimeType If null, defaults to DataURLType.PNG
-     * @return String
-     */
     public String toDataURL(final boolean filtered)
     {
         if (!isLoaded())
@@ -701,9 +695,7 @@ public class ImageProxy<T extends AbstractImageShape<T>> implements ImageDataFil
 
     void destroy(final Image image)
     {
-        // @TODO check this works (mdp)
         RootPanel.get().remove(image);
-        image.parentNode.removeChild(image);
         m_image.removeFromParent();
         m_normalImage.clear();
         m_filterImage.clear();
