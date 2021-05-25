@@ -25,9 +25,9 @@ import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.style.Style;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Transform;
-import com.ait.lienzo.client.widget.LienzoPanelImpl;
 import com.ait.lienzo.client.widget.panel.Bounds;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
+import com.ait.lienzo.client.widget.panel.impl.LienzoFixedPanel;
 import com.ait.lienzo.client.widget.panel.impl.PreviewLayer;
 import com.ait.lienzo.client.widget.panel.impl.ScrollablePanel;
 import com.ait.lienzo.client.widget.panel.util.PanelTransformUtils;
@@ -45,7 +45,7 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
 
     private final MouseBoxZoomMediator mediator;
     private final Consumer<HTMLDivElement> divElementConsumer;
-    private final LienzoPanelImpl previewPanel;
+    private final LienzoFixedPanel previewPanel;
     private final PreviewLayer previewLayer;
     private Supplier<BoundingBox> area;
     private double maxScale;
@@ -62,12 +62,12 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
                                 final Consumer<HTMLDivElement> previewPanel) {
         this(panelSupplier,
              previewPanel,
-             () -> new LienzoPanelImpl((HTMLDivElement) DomGlobal.document.createElement("div"), 1, 1));
+             () -> LienzoFixedPanel.newPanel(1, 1));
     }
 
     public PanelPreviewMediator(final Supplier<LienzoBoundsPanel> panelSupplier,
                                 final Consumer<HTMLDivElement> divElementConsumer,
-                                final Supplier<LienzoPanelImpl> previewPanelBuilder) {
+                                final Supplier<LienzoFixedPanel> previewPanelBuilder) {
         super(panelSupplier);
         this.divElementConsumer = divElementConsumer;
         this.previewPanel = previewPanelBuilder.get();
@@ -103,7 +103,7 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
         style.borderStyle = Style.BorderStyle.NONE.getCssName();
         style.backgroundColor = PREVIEW_BG_COLOR;
         previewPanel.setPixelSize(panelWidthPx, panelHeightPx);
-        previewPanel.setVisible(true);
+        previewPanel.getElement().style.display = Style.Display.BLOCK.getCssName();
 
         final BoundingBox areaBox = area.get();
         final double fitLevel = PanelTransformUtils.computeZoomLevelFitToWidth(areaBox.getWidth(),
@@ -132,7 +132,7 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
         mediator.setEnabled(false);
         previewLayer.clear();
         previewPanel.setPixelSize(1, 1);
-        previewPanel.setVisible(false);
+        previewPanel.getElement().style.display = Style.Display.NONE.getCssName();
         previewLayer.getViewport().setTransform(new Transform());
         getLayer().setVisible(true);
     }
@@ -145,7 +145,7 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
     public void onRemoveHandler() {
         super.onRemoveHandler();
         mediator.setOnTransform(null);
-        previewPanel.removeFromParent();
+        previewPanel.removeAll();
         area = null;
     }
 
@@ -160,7 +160,7 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
                     disable();
                 });
         previewLayer.getViewport().getMediators().push(mediator);
-        previewPanel.setVisible(false);
+        previewPanel.getElement().style.display = Style.Display.NONE.getCssName();
 
         divElementConsumer.accept(previewPanel.getElement());
     }
@@ -169,7 +169,7 @@ public class PanelPreviewMediator extends AbstractPanelMediator<PanelPreviewMedi
         return mediator;
     }
 
-    LienzoPanelImpl getPreviewPanel() {
+    LienzoFixedPanel getPreviewPanel() {
         return previewPanel;
     }
 

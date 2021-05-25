@@ -35,11 +35,8 @@ public final class NFastArrayList<M> extends NArrayBase<M>
         return list;
     }
 
-    //private final FastArrayListJSO<M> m_jso;
-
     public NFastArrayList()
     {
-        //m_jso = FastArrayListJSO.makeFromString().cast();
     }
 
     /**

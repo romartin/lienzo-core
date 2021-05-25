@@ -33,41 +33,6 @@ public abstract class NArrayBase<M> implements JsIterable<M>, JsArrayLike<M>
     {
     }
 
-//    public final JSONArray toJSONArray()
-//    {
-//        return new JSONArray(this);
-//    }
-//
-//    public final String toJSONString()
-//    {
-//        return JSON.toJSONString(this);
-//    }
-//
-//    public final String toJSONString(final NJSONReplacer replacer)
-//    {
-//        return JSON.toJSONString(this, replacer);
-//    }
-//
-//    public final String toJSONString(final String indent)
-//    {
-//        return JSON.toJSONString(this, indent);
-//    }
-//
-//    public final String toJSONString(final NJSONReplacer replacer, final String indent)
-//    {
-//        return JSON.toJSONString(this, replacer, indent);
-//    }
-//
-//    public final String toJSONString(final int indent)
-//    {
-//        return JSON.toJSONString(this, indent);
-//    }
-//
-//    public final String toJSONString(final NJSONReplacer replacer, final int indent)
-//    {
-//        return JSON.toJSONString(this, replacer, indent);
-//    }
-
     @JsOverlay
     public final void clear()
     {
@@ -79,15 +44,6 @@ public abstract class NArrayBase<M> implements JsIterable<M>, JsArrayLike<M>
     {
         return join(",");
     }
-
-//    public final JSONType getNativeTypeOf(final int index)
-//    {
-//        if ((index < 0) || (index >= size()))
-//        {
-//            return JSONType.UNDEFINED;
-//        }
-//        return Native.getNativeTypeOf(this, index);
-//    }
 
     @JsOverlay
     public final boolean isNull(final int index)
@@ -178,14 +134,4 @@ public abstract class NArrayBase<M> implements JsIterable<M>, JsArrayLike<M>
         return asList();
     }
 
-
-//    private final native boolean isNull_0(int index)
-//    /*-{
-//		return this[index] == null;
-//    }-*/;
-//
-//    private final native boolean isDefined_0(int index)
-//    /*-{
-//		return this[index] !== undefined;
-//    }-*/;
 }

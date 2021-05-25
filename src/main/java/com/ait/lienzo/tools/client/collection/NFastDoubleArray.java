@@ -24,17 +24,10 @@ import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 
 @JsType(isNative = true, name = "Array", namespace = JsPackage.GLOBAL)
-public class NFastDoubleArray extends NArrayBase<Double>
-        //extends NFastPrimitiveArrayBase<NFastDoubleArray, NFastDoubleArrayJSO>
-{
-//    public NFastDoubleArray(final NFastDoubleArrayJSO jso)
-//    {
-//        super((null == jso) ? NFastDoubleArrayJSO.makeFromString() : jso);
-//    }
+public class NFastDoubleArray extends NArrayBase<Double> {
 
     public NFastDoubleArray()
     {
-        //super(NFastDoubleArrayJSO.makeFromString());
     }
 
     @JsOverlay

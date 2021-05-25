@@ -160,7 +160,6 @@ public class Scene extends ContainerNode<Layer, Scene>
 
         m_high = high;
 
-        // @FIXME is this correct? (mdp)
         m_element.style.width = CSSProperties.WidthUnionType.of(wide + Style.Unit.PX.getType());
 
         m_element.style.height = CSSProperties.HeightUnionType.of(high + Style.Unit.PX.getType());
