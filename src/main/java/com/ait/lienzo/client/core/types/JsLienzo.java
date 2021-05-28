@@ -4,7 +4,6 @@ import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.NativeContext2D;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
-import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import com.ait.lienzo.tools.client.event.EventType;
@@ -22,14 +21,11 @@ public class JsLienzo {
     public LienzoPanel panel;
     public Layer layer;
 
-    public Rectangle RECT(String id, double x, double y, double width, double height) {
-        return new Rectangle(width, height)
-                .setID(id)
-                .setAlpha(1)
-                .setStrokeAlpha(1)
-                .setStrokeWidth(1)
-                .setX(x)
-                .setY(y);
+    public void doubleClick(IPrimitive<?> shape) {
+        Point2D location = shape.getComputedLocation();
+        double x = location.getX();
+        double y = location.getY();
+        doubleClickAt(x, y);
     }
 
     public void click(IPrimitive<?> shape) {
@@ -37,26 +33,63 @@ public class JsLienzo {
         double x = location.getX();
         double y = location.getY();
         clickAt(x, y);
+    }
 
+    public void over(IPrimitive<?> shape) {
+        Point2D location = shape.getComputedLocation();
+        double x = location.getX();
+        double y = location.getY();
+        mouseOver(x, y);
+    }
+
+    public void out(IPrimitive<?> shape) {
+        Point2D location = shape.getComputedLocation();
+        double x = location.getX();
+        double y = location.getY();
+        mouseOut(x, y);
     }
 
     public void clickAt(double x, double y) {
         dispatchEvent(EventType.CLICKED.getType(), x, y);
     }
 
+    public void doubleClickAt(double x, double y) {
+        dispatchEvent(EventType.DOUBLE_CLICKED.getType(), x, y);
+    }
+
     public void move(IPrimitive<?> shape, double tx, double ty) {
         Point2D location = shape.getComputedLocation();
         double x = location.getX();
         double y = location.getY();
-        moveAt(x, y, tx, ty);
+        drag(x, y, tx, ty);
     }
 
-    public void moveAt(double sx, double sy, double tx, double ty) {
-        dispatchEvent(EventType.MOUSE_DOWN.getType(), sx, sy);
-        dispatchEvent(EventType.MOUSE_MOVE.getType(), sx, sy);
+    public void mouseOver(double x, double y) {
+        dispatchEvent(EventType.MOUSE_OVER.getType(), x, y);
+    }
+
+    public void mouseOut(double x, double y) {
+        dispatchEvent(EventType.MOUSE_OUT.getType(), x, y);
+    }
+
+    public void mouseDown(double x, double y) {
+        dispatchEvent(EventType.MOUSE_DOWN.getType(), x, y);
+    }
+
+    public void mouseMove(double x, double y) {
+        dispatchEvent(EventType.MOUSE_MOVE.getType(), x, y);
+
+    }
+    public void mouseUp(double x, double y) {
+        dispatchEvent(EventType.MOUSE_UP.getType(), x, y);
+    }
+
+    public void drag(double sx, double sy, double tx, double ty) {
+        mouseDown(sx, sy);
+        mouseMove(sx, sy);
         //dispatchEvent(EventType.MOUSE_MOVE.getType(), (tx - sx) / 2, (ty - sy) / 2);
-        dispatchEvent(EventType.MOUSE_MOVE.getType(), tx, ty);
-        dispatchEvent(EventType.MOUSE_UP.getType(), tx, ty);
+        mouseMove(tx, ty);
+        mouseUp(tx, ty);
     }
 
     public int getPanelOffsetLeft() {
