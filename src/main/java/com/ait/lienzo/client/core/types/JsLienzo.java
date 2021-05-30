@@ -2,8 +2,12 @@ package com.ait.lienzo.client.core.types;
 
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.NativeContext2D;
+import com.ait.lienzo.client.core.shape.ContainerNode;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
+import com.ait.lienzo.client.core.shape.wires.WiresManager;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import com.ait.lienzo.tools.client.event.EventType;
@@ -12,6 +16,7 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import elemental2.dom.MouseEventInit;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 
@@ -20,6 +25,7 @@ public class JsLienzo {
 
     public LienzoPanel panel;
     public Layer layer;
+    public WiresManager wiresManager;
 
     public void doubleClick(IPrimitive<?> shape) {
         Point2D location = shape.getComputedLocation();
@@ -61,7 +67,17 @@ public class JsLienzo {
         Point2D location = shape.getComputedLocation();
         double x = location.getX();
         double y = location.getY();
-        drag(x, y, tx, ty);
+        mouseDown(x, y);
+        mouseMove(x, y);
+        mouseMove(tx, ty);
+        mouseUp(tx, ty);
+    }
+
+    public void drag(IPrimitive<?> shape, double tx, double ty, DragCallbackFn callback) {
+        Point2D location = shape.getComputedLocation();
+        double x = location.getX();
+        double y = location.getY();
+        startDrag(x, y, tx, ty, callback);
     }
 
     public void mouseOver(double x, double y) {
@@ -84,12 +100,40 @@ public class JsLienzo {
         dispatchEvent(EventType.MOUSE_UP.getType(), x, y);
     }
 
-    public void drag(double sx, double sy, double tx, double ty) {
+    @JsFunction
+    public interface DragCallbackFn {
+        void onInvoke();
+    }
+
+    private void startDrag(double sx, double sy, double tx, double ty, DragCallbackFn callback) {
         mouseDown(sx, sy);
         mouseMove(sx, sy);
-        //dispatchEvent(EventType.MOUSE_MOVE.getType(), (tx - sx) / 2, (ty - sy) / 2);
-        mouseMove(tx, ty);
-        mouseUp(tx, ty);
+        float steps = 50;
+        double step = 1 / steps;
+        completeDrag(sx, sy, tx, ty, step, step, callback);
+    }
+
+    private void completeDrag(final double sx,
+                              final double sy,
+                              final double tx,
+                              final double ty,
+                              final double actual,
+                              final double step,
+                              final DragCallbackFn callback) {
+        DomGlobal.setTimeout(new DomGlobal.SetTimeoutCallbackFn() {
+            @Override
+            public void onInvoke(Object... p0) {
+                double dx = (tx - sx) * actual;
+                double dy = (ty - sy) * actual;
+                mouseMove(sx + dx,  sy + dy);
+                if (actual < 1) {
+                    completeDrag(sx, sy, tx, ty, actual + step, step, callback);
+                } else {
+                    mouseUp(tx, ty);
+                    callback.onInvoke();
+                }
+            }
+        }, 20);
     }
 
     public int getPanelOffsetLeft() {
@@ -107,11 +151,15 @@ public class JsLienzo {
                                     double clientY) {
         MouseEventInit mouseEventInit = MouseEventInit.create();
         mouseEventInit.setView(DomGlobal.window);
-        double x = clientX + getPanelOffsetLeft();
-        double y = clientY + getPanelOffsetTop();
+        int panelOffsetLeft = getPanelOffsetLeft();
+        int panelOffsetTop = getPanelOffsetTop();
+        long ix = Math.round(Math.ceil(clientX));
+        long iy = Math.round(Math.ceil(clientY));
+        long  x = ix + panelOffsetLeft;
+        long  y = iy + panelOffsetTop;
         mouseEventInit.setClientX(x);
         mouseEventInit.setClientY(y);
-        mouseEventInit.setScreenX(y);
+        mouseEventInit.setScreenX(x);
         mouseEventInit.setScreenY(y);
         mouseEventInit.setButton(MouseEventUtil.BUTTON_LEFT);
         MouseEvent event = new MouseEvent(type, mouseEventInit);
@@ -133,21 +181,6 @@ public class JsLienzo {
         layer.add(shape);
     }
 
-    public IPrimitive<?> getShape(String id) {
-        NFastArrayList<IPrimitive<?>> shapes = layer.getChildNodes();
-        if (null != shapes)
-        {
-            for (IPrimitive<?> shape : shapes.asList())
-            {
-                String shapeID = shape.getID();
-                if (id.equals(shapeID)) {
-                    return shape;
-                }
-            }
-        }
-        return null;
-    }
-
     public void draw() {
         layer.draw();
     }
@@ -158,5 +191,42 @@ public class JsLienzo {
         return nativeContext;
     }
 
+    public IPrimitive<?> getShape(String id) {
+        return getShapeInContainer(id, layer);
+    }
+
+    @SuppressWarnings("all")
+    private static IPrimitive<?> getShapeInContainer(String id, ContainerNode parent) {
+        NFastArrayList<IPrimitive<?>> shapes = parent.getChildNodes();
+        if (null != shapes)
+        {
+            for (IPrimitive<?> shape : shapes.asList())
+            {
+                String shapeID = shape.getID();
+                if (id.equals(shapeID)) {
+                    return shape;
+                }
+                if (shape instanceof ContainerNode) {
+                    IPrimitive<?> shape1 = getShapeInContainer(id, (ContainerNode) shape);
+                    if (null != shape1) {
+                        return shape1;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public JsWiresShape getWiresShape(String id) {
+        WiresShape[] shapes = wiresManager.getShapes();
+        for (WiresShape shape : shapes) {
+            if (id.equals(shape.getID())) {
+                JsWiresShape jsWiresShape = new JsWiresShape();
+                jsWiresShape.shape = shape;
+                return jsWiresShape;
+            }
+        }
+        return null;
+    }
 
 }

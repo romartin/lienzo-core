@@ -101,8 +101,13 @@ public class WiresContainer
         return m_container;
     }
 
-    public void setID(String id) {
+    public String getID() {
+        return getContainer().getID();
+    }
+
+    public WiresContainer setID(String id) {
         getContainer().setID(id);
+        return this;
     }
 
     public Group getGroup()
