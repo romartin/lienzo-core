@@ -60,7 +60,7 @@ public class WiresShapeProxy
         startLocation = location.copy();
         if (null != shape.getParent()) {
             final Point2D parentLocation = shape.getParent().getComputedLocation();
-            startLocation.add(parentLocation);
+            startLocation = startLocation.add(parentLocation);
             shape.removeFromParent();
             getWiresLayer().add(shape);
         }

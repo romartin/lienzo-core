@@ -18,6 +18,8 @@ package com.ait.lienzo.client.core.shape.wires.handlers.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.shape.wires.OptionalBounds;
 import com.ait.lienzo.client.core.shape.wires.PickerPart;
@@ -38,8 +40,6 @@ import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.util.Geometry;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The default WiresShapeControl implementation.
@@ -109,6 +109,8 @@ public class WiresShapeControlImpl
 
         // Delegate move start to the align and distribute control.
         if (m_alignAndDistributeControl != null) {
+            // move selected shapes and its connectors to top before dragging.
+            moveShapeUpToParent();
             m_alignAndDistributeControl.dragStart();
         }
 
@@ -211,8 +213,6 @@ public class WiresShapeControlImpl
         WiresShapeControlUtils.checkForAndApplyLineSplice(getWiresManager(),
                                                           getShape());
 
-        moveShapeUpToParent();
-
         return adjust;
     }
 
@@ -285,8 +285,6 @@ public class WiresShapeControlImpl
 
         WiresShapeControlUtils.checkForAndApplyLineSplice(getWiresManager(),
                                                           getShape());
-
-        moveShapeUpToParent();
 
         clear();
     }
