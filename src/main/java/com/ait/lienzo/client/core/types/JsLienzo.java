@@ -20,6 +20,8 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 
+// TODO: Split between shape / events subclasses?
+
 @JsType(namespace = JsPackage.GLOBAL)
 public class JsLienzo {
 
@@ -63,23 +65,6 @@ public class JsLienzo {
         dispatchEvent(EventType.DOUBLE_CLICKED.getType(), x, y);
     }
 
-    public void move(IPrimitive<?> shape, double tx, double ty) {
-        Point2D location = shape.getComputedLocation();
-        double x = location.getX();
-        double y = location.getY();
-        mouseDown(x, y);
-        mouseMove(x, y);
-        mouseMove(tx, ty);
-        mouseUp(tx, ty);
-    }
-
-    public void drag(IPrimitive<?> shape, double tx, double ty, DragCallbackFn callback) {
-        Point2D location = shape.getComputedLocation();
-        double x = location.getX();
-        double y = location.getY();
-        startDrag(x, y, tx, ty, callback);
-    }
-
     public void mouseOver(double x, double y) {
         dispatchEvent(EventType.MOUSE_OVER.getType(), x, y);
     }
@@ -100,25 +85,46 @@ public class JsLienzo {
         dispatchEvent(EventType.MOUSE_UP.getType(), x, y);
     }
 
-    @JsFunction
-    public interface DragCallbackFn {
-        void onInvoke();
+    public void move(IPrimitive<?> shape, double tx, double ty) {
+        Point2D location = shape.getComputedLocation();
+        double x = location.getX();
+        double y = location.getY();
+        mouseDown(x, y);
+        mouseMove(x, y);
+        mouseMove(tx, ty);
+        mouseUp(tx, ty);
     }
 
-    private void startDrag(double sx, double sy, double tx, double ty, DragCallbackFn callback) {
+    public void drag(IPrimitive<?> shape, double tx, double ty, DragCallbackFn callback) {
+        Point2D location = shape.getComputedLocation();
+        double x = location.getX();
+        double y = location.getY();
+        startDrag(x, y, tx, ty, 5, callback);
+    }
+
+    // when dragging connections, something tricky happens on WiresConnectorControlPointBuilder, that prevents dragging CPs automatically to work properly
+    public void dragControlPoint(double sx, double sy, double tx, double ty, float steps, int timeout, DragCallbackFn callback) {
+        mouseMove(sx, sy);
+        mouseDown(sx, sy);
+        double step = 1 / steps;
+        doDrag(sx, sy, tx, ty, step, step, timeout, callback);
+    }
+
+    public void startDrag(double sx, double sy, double tx, double ty, int timeout, DragCallbackFn callback) {
         mouseDown(sx, sy);
         mouseMove(sx, sy);
-        float steps = 50;
+        float steps = 100;
         double step = 1 / steps;
-        completeDrag(sx, sy, tx, ty, step, step, callback);
+        doDrag(sx, sy, tx, ty, step, step, timeout, callback);
     }
 
-    private void completeDrag(final double sx,
+    private void doDrag(final double sx,
                               final double sy,
                               final double tx,
                               final double ty,
                               final double actual,
                               final double step,
+                              final int timeout,
                               final DragCallbackFn callback) {
         DomGlobal.setTimeout(new DomGlobal.SetTimeoutCallbackFn() {
             @Override
@@ -126,14 +132,21 @@ public class JsLienzo {
                 double dx = (tx - sx) * actual;
                 double dy = (ty - sy) * actual;
                 mouseMove(sx + dx,  sy + dy);
+                // DomGlobal.console.log("DRAG STEP TO [" + (sx + dx) + ", " + (sy + dy) + "]");
                 if (actual < 1) {
-                    completeDrag(sx, sy, tx, ty, actual + step, step, callback);
+                    doDrag(sx, sy, tx, ty, actual + step, step, timeout, callback);
                 } else {
+                    // DomGlobal.console.log("DRAG END TO [" + tx + ", " + ty + "]");
                     mouseUp(tx, ty);
                     callback.onInvoke();
                 }
             }
-        }, 20);
+        }, timeout);
+    }
+
+    @JsFunction
+    public interface DragCallbackFn {
+        void onInvoke();
     }
 
     public int getPanelOffsetLeft() {
