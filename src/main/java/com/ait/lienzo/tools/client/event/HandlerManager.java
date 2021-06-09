@@ -44,7 +44,15 @@ public class HandlerManager
         return reg;
     }
 
-    protected <H> void removeHandler(Type<H> type, EventHandler handler) {
+    public <H extends EventHandler> H getHandler(Type<H> type, int index) {
+        return (H) map.get(type).getAt(index);
+    }
+
+    public <H extends EventHandler> int getHandlerCount(Type<H> type) {
+        return map.get(type).length;
+    }
+
+    public  <H> void removeHandler(Type<H> type, EventHandler handler) {
         if (map != null)
         {
             JsArray<EventHandler> handlers = map.get(type);
